@@ -1,0 +1,170 @@
+<section class="day-dialog">
+  <header>
+    <div class="header-title">
+      <p class="eyebrow">DAILY WORKLOG</p>
+      <h2 id="day-title">{{ label }}</h2>
+    </div>
+    <div class="header-actions">
+      <button type="button" data-skip-autosave (click)="toggleOff()">
+        <span class="material-symbols-outlined" aria-hidden="true">chair_umbrella</span>
+        {{ off() ? 'Remove day off' : 'Mark as day off' }}
+      </button>
+      <button type="button" aria-label="Close day dialog" (click)="close()">
+        <span class="material-symbols-outlined" aria-hidden="true">close</span>
+      </button>
+    </div>
+  </header>
+  <div class="dialog-body">
+    @if (store.error()) {
+      <p role="alert" class="error">{{ store.error() }}</p>
+    }
+    <div
+      class="dialog-tabs"
+      [class.todo-active]="tab() === 'todo'"
+      role="tablist"
+      aria-label="Daily entries"
+      (keydown)="navigateTabs($event, worklogTab, todoTab)"
+    >
+      <button
+        #worklogTab
+        type="button"
+        id="worklog-tab"
+        role="tab"
+        aria-controls="worklog-panel"
+        [attr.aria-selected]="tab() === 'worklog'"
+        [tabIndex]="tab() === 'worklog' ? 0 : -1"
+        (click)="selectTab('worklog')"
+      >
+        Worklog
+      </button>
+      <button
+        #todoTab
+        type="button"
+        id="todo-tab"
+        role="tab"
+        aria-controls="todo-panel"
+        [attr.aria-selected]="tab() === 'todo'"
+        [tabIndex]="tab() === 'todo' ? 0 : -1"
+        (click)="selectTab('todo')"
+      >
+        TODO
+      </button>
+    </div>
+    <div
+      id="worklog-panel"
+      role="tabpanel"
+      aria-labelledby="worklog-tab"
+      [hidden]="tab() !== 'worklog'"
+    >
+      @if (off()) {
+        <div class="empty">
+          <h3>Time away from work</h3>
+          <p>No entries will be generated on this date. Remove day off to add work.</p>
+        </div>
+      } @else {
+        <div class="editor">
+          <aside aria-label="Work items">
+            @if (items().length) {
+              <div class="bulk-tools">
+                <label class="select-all">
+                  <input
+                    type="checkbox"
+                    [checked]="allChecked()"
+                    [indeterminate]="checkedItems().length > 0 && !allChecked()"
+                    (change)="toggleAll()"
+                  />
+                  Select all
+                </label>
+                <span class="selection-count" role="status"
+                  >{{ checkedItems().length }} selected</span
+                >
+                <button
+                  type="button"
+                  class="danger bulk-delete"
+                  data-skip-autosave
+                  [disabled]="checkedItems().length === 0"
+                  (click)="removeChecked()"
+                >
+                  <span class="material-symbols-outlined" aria-hidden="true">delete</span>
+                  Delete selected
+                </button>
+              </div>
+            }
+            @for (item of items(); track item.id) {
+              <div class="item-row">
+                <input
+                  type="checkbox"
+                  [attr.aria-label]="
+                    'Select ' +
+                    title(item) +
+                    ' for deletion, ' +
+                    hours(item.timeSpent) +
+                    ' hours, ' +
+                    (item.timeLog ? 'logged' : 'not logged')
+                  "
+                  [checked]="checked().has(item.id)"
+                  (change)="toggleChecked(item.id)"
+                />
+                <button
+                  type="button"
+                  class="list-item"
+                  [class.active]="selected()?.id === item.id"
+                  (click)="choose(item)"
+                >
+                  <strong>{{ title(item) }}</strong
+                  ><span
+                    >{{ hours(item.timeSpent) }} h ·
+                    {{ item.timeLog ? 'Logged' : 'Not logged' }}</span
+                  >
+                </button>
+              </div>
+            } @empty {
+              <p class="hint">No work items yet.</p>
+            }
+            <div class="add-actions">
+              <button type="button" (click)="add('MEETING')">+ Meeting</button
+              ><button type="button" (click)="add('WORK_ON_TASK')">+ Task</button>
+            </div>
+          </aside>
+          <div class="form-panel">
+            @if (selected(); as item) {
+              <div class="form-heading">
+                <h3>{{ item.type === 'MEETING' ? 'Meeting' : 'Work on task' }}</h3>
+                @if (isSaved(item)) {
+                  <button type="button" class="danger" data-skip-autosave (click)="remove()">
+                    Delete
+                  </button>
+                }
+              </div>
+              <app-item-form
+                [item]="item"
+                (saved)="save($event)"
+                (autosaved)="autoSave($event)"
+                (cancelled)="cancel()"
+                (changed)="formChanged($event)"
+              />
+            } @else {
+              <div class="empty">
+                <h3>A place for your work</h3>
+                <p>Select an item or add a meeting or task.</p>
+              </div>
+            }
+          </div>
+        </div>
+      }
+    </div>
+    <div id="todo-panel" role="tabpanel" aria-labelledby="todo-tab" [hidden]="tab() !== 'todo'">
+      <app-todo-checklist
+        [items]="todoRows()"
+        [focusId]="todoFocusId()"
+        (createAfter)="createTodoAfter($event)"
+        [errors]="todoErrors()"
+        (add)="addTodo()"
+        (edited)="editTodo($event)"
+        (remove)="removeTodo($event)"
+        (toggle)="toggleTodo($event)"
+        (saved)="saveTodo($event)"
+      />
+    </div>
+  </div>
+</section>

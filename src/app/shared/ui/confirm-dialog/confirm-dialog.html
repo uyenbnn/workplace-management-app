@@ -1,0 +1,8 @@
+﻿<section class="confirmation">
+  <h2 id="confirm-title">{{ data.title }}</h2>
+  <p>{{ data.message }}</p>
+  <div class="actions">
+    <button type="button" cdkFocusInitial (click)="ref.close(false)">Cancel</button
+    ><button type="button" class="primary" (click)="ref.close(true)">{{ data.action }}</button>
+  </div>
+</section>

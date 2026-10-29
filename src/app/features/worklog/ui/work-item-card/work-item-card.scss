@@ -1,0 +1,35 @@
+﻿:host {
+  display: block;
+  min-width: 0;
+}
+.item-card {
+  border-radius: var(--radius-control);
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  width: 100%;
+  text-align: left;
+  padding: 0.6rem;
+  border-color: var(--color-border-default);
+  background: var(--color-surface-subtle);
+  font-size: 0.8rem;
+}
+.item-title {
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%;
+}
+.item-meta {
+  font-size: 0.7rem;
+  color: var(--color-text-secondary);
+}
+
+.logged {
+  font-size: 0.7rem;
+  color: var(--color-success-700);
+}
+.meeting {
+  border-left: 3px solid var(--color-focus-ring);
+}

@@ -1,0 +1,57 @@
+<section aria-labelledby="todo-heading">
+  <div class="heading">
+    <h3 id="todo-heading">Daily TODOs</h3>
+  </div>
+  <p class="hint">
+    Edit inline. Press Enter to save and add another TODO. Click or Tab outside an item to save.
+  </p>
+  <ul>
+    @for (item of items(); track item.id) {
+      <li (focusout)="leaveRow($event, item)">
+        <div class="todo-row">
+          <input
+            type="checkbox"
+            class="completion"
+            [checked]="item.completed"
+            [attr.aria-label]="
+              (item.completed ? 'Reopen TODO: ' : 'Complete TODO: ') +
+              (item.title || 'Untitled TODO')
+            "
+            (change)="toggle.emit(item.id); $event.target.checked = item.completed"
+          />
+          <div class="fields">
+            <input
+              #titleInput
+              [attr.data-todo-id]="item.id"
+              (keydown.enter)="enterTitle($event, item)"
+              type="text"
+              class="title"
+              [class.done]="item.completed"
+              [value]="item.title"
+              placeholder="What needs to be done?"
+              [attr.aria-label]="'TODO title: ' + (item.title || 'New TODO')"
+              required
+              [attr.aria-invalid]="!!errors()[item.id]"
+              [attr.aria-describedby]="errors()[item.id] ? 'todo-error-' + item.id : null"
+              (input)="edited.emit({ item, values: { title: titleInput.value } })"
+            />
+          </div>
+          <button
+            type="button"
+            class="delete"
+            [attr.aria-label]="'Delete TODO: ' + (item.title || 'Untitled TODO')"
+            (click)="remove.emit(item)"
+          >
+            <span class="material-symbols-outlined" aria-hidden="true">delete</span>
+          </button>
+        </div>
+        @if (errors()[item.id]; as error) {
+          <p class="field-error" [id]="'todo-error-' + item.id" role="alert">{{ error }}</p>
+        }
+      </li>
+    } @empty {
+      <li class="hint empty">No TODOs yet. Add a reminder for this date.</li>
+    }
+  </ul>
+  <button type="button" class="add-todo" (click)="add.emit()">+ TODO</button>
+</section>

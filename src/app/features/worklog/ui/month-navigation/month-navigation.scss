@@ -1,0 +1,21 @@
+﻿.month-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.5rem 0;
+}
+h2 {
+  margin: 0;
+  font-size: 1.15rem;
+}
+
+@media (max-width: 767px) {
+  .month-nav {
+    flex-wrap: wrap;
+  }
+  h2 {
+    font-size: 1rem;
+    overflow-wrap: anywhere;
+  }
+}

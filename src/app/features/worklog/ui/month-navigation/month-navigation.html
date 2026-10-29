@@ -1,0 +1,12 @@
+<div class="month-nav">
+  <h2>{{ label() }}</h2>
+  <div class="actions">
+    <button type="button" [attr.aria-label]="'Previous ' + period()" (click)="move.emit(-1)">
+      <span class="material-symbols-outlined" aria-hidden="true">chevron_left</span>
+    </button>
+    <button type="button" (click)="today.emit()">Today</button>
+    <button type="button" [attr.aria-label]="'Next ' + period()" (click)="move.emit(1)">
+      <span class="material-symbols-outlined" aria-hidden="true">chevron_right</span>
+    </button>
+  </div>
+</div>

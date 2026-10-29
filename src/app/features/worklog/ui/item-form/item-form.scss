@@ -1,0 +1,54 @@
+﻿form {
+  display: grid;
+  gap: 0.6rem;
+}
+label {
+  font-weight: 600;
+  font-size: 0.875rem;
+  margin-top: 0.4rem;
+}
+input:not([type='checkbox']),
+select {
+  width: 100%;
+  min-height: 42px;
+  padding: 0.6rem;
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--radius-control);
+  background: var(--color-surface-default);
+  color: var(--color-text-primary);
+}
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+.form-row > div {
+  display: grid;
+  gap: 0.6rem;
+}
+.checkbox {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.optional,
+.hint {
+  font-weight: 400;
+  color: var(--color-text-secondary);
+  font-size: 0.75rem;
+}
+.hint {
+  margin: 0;
+}
+.field-error {
+  margin: 0;
+  color: var(--color-feedback-danger-text);
+  font-size: 0.8rem;
+}
+.form-actions {
+  background: var(--color-surface-default);
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.6rem;
+  padding: 1rem 0 0;
+}

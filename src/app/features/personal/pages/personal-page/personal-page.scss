@@ -1,0 +1,17 @@
+:host {
+  display: block;
+}
+
+main {
+  max-width: var(--layout-content-max-width);
+  margin: auto;
+  padding: 2.5rem var(--layout-content-gutter);
+}
+
+h1 {
+  font-size: clamp(1.4rem, 3vw, 2rem);
+}
+
+p {
+  color: var(--color-text-secondary);
+}

@@ -1,0 +1,21 @@
+:host {
+  display: block;
+}
+.toast {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.85rem 1.2rem;
+  max-width: calc(100vw - 2rem);
+  border: 1px solid var(--color-feedback-success-border);
+  border-radius: var(--radius-pill);
+  background: var(--color-feedback-success-background);
+  color: var(--color-feedback-success-foreground);
+  box-shadow: var(--shadow-dialog);
+  font-size: var(--typography-label-md-size);
+  font-weight: var(--typography-label-md-weight);
+  overflow-wrap: anywhere;
+}
+.success-icon {
+  flex-shrink: 0;
+}

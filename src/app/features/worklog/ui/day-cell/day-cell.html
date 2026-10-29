@@ -1,0 +1,76 @@
+<div
+  class="cell"
+  [class.expanded]="layout() === 'work-week'"
+  (click)="dateButton.focus(); open.emit(undefined)"
+  [class.outside]="outside()"
+  [class.weekend]="weekend()"
+  [class.selected]="selected()"
+>
+  <button
+    #dateButton
+    type="button"
+    class="date"
+    [class.today]="today()"
+    [attr.aria-label]="label()"
+    [attr.aria-current]="today() ? 'date' : null"
+    (click)="$event.stopPropagation(); open.emit(undefined)"
+  >
+    {{ day() }} <span class="today-label">{{ today() ? 'Today' : '' }}</span>
+    @if (!off()) {
+      <span class="cell-affordance material-symbols-outlined" aria-hidden="true">add</span>
+    }
+  </button>
+  @if (off()) {
+    <span class="day-off">Day off</span>
+  } @else {
+    <div class="cards">
+      @for (
+        item of layout() === 'work-week' ? workItems() : workItems().slice(0, 2);
+        track item.id
+      ) {
+        <app-work-item-card [item]="item" (choose)="open.emit($event)" />
+      }
+    </div>
+    @if (layout() === 'month' && workItems().length > 2) {
+      <button
+        type="button"
+        class="overflow"
+        (click)="$event.stopPropagation(); open.emit(undefined)"
+      >
+        +{{ workItems().length - 2 }} more
+      </button>
+    }
+    <button
+      type="button"
+      class="compact"
+      [attr.aria-label]="label()"
+      (click)="$event.stopPropagation(); open.emit(undefined)"
+    >
+      {{ workItems().length }} items
+      <span class="type-indicators" aria-hidden="true">{{ types() }}</span>
+    </button>
+  }
+  @if (todos().length) {
+    <ul class="todo-pills" aria-label="Daily TODOs">
+      @for (todo of todos(); track todo.id) {
+        <li>
+          <button
+            type="button"
+            class="todo-pill"
+            [class.completed]="todo.completed"
+            [attr.aria-label]="
+              todo.title + (todo.completed ? ', Done' : ', To do') + '. Open TODOs'
+            "
+            (click)="$event.stopPropagation(); openTodos.emit()"
+          >
+            <span class="material-symbols-outlined" aria-hidden="true">{{
+              todo.completed ? 'check_circle' : 'radio_button_unchecked'
+            }}</span>
+            <span class="todo-title">{{ todo.title }}</span>
+            <span class="todo-status">{{ todo.completed ? 'Done' : 'To do' }}</span>
+          </button>
+        </li>
+      }
+    </ul>
+  }
+</div>

@@ -1,0 +1,1241 @@
+{
+  "typography": {
+    "family": {
+      "heading": {
+        "$type": "string",
+        "$value": "Unbounded",
+        "$extensions": {
+          "com.figma.variableId": "VariableID:26:4",
+          "com.figma.scopes": [
+            "ALL_SCOPES"
+          ],
+          "com.figma.type": "string"
+        }
+      },
+      "body": {
+        "$type": "string",
+        "$value": "Albert Sans",
+        "$extensions": {
+          "com.figma.variableId": "VariableID:26:5",
+          "com.figma.scopes": [
+            "ALL_SCOPES"
+          ],
+          "com.figma.type": "string"
+        }
+      },
+      "code": {
+        "$type": "string",
+        "$value": "monospace",
+        "$description": "Generic code placeholder; choose an installed monospace font in Figma.",
+        "$extensions": {
+          "com.figma.variableId": "VariableID:26:6",
+          "com.figma.scopes": [
+            "ALL_SCOPES"
+          ],
+          "com.figma.type": "string"
+        }
+      }
+    },
+    "weight": {
+      "regular": {
+        "$type": "number",
+        "$value": 400,
+        "$extensions": {
+          "com.figma.variableId": "VariableID:26:7",
+          "com.figma.scopes": [
+            "ALL_SCOPES"
+          ]
+        }
+      },
+      "medium": {
+        "$type": "number",
+        "$value": 500,
+        "$extensions": {
+          "com.figma.variableId": "VariableID:26:8",
+          "com.figma.scopes": [
+            "ALL_SCOPES"
+          ]
+        }
+      },
+      "semibold": {
+        "$type": "number",
+        "$value": 600,
+        "$extensions": {
+          "com.figma.variableId": "VariableID:26:9",
+          "com.figma.scopes": [
+            "ALL_SCOPES"
+          ]
+        }
+      }
+    },
+    "display": {
+      "lg": {
+        "family": {
+          "$type": "string",
+          "$value": "Unbounded",
+          "$extensions": {
+            "com.figma.variableId": "VariableID:26:10",
+            "com.figma.scopes": [
+              "ALL_SCOPES"
+            ],
+            "com.figma.type": "string"
+          }
+        },
+        "weight": {
+          "$type": "number",
+          "$value": 600,
+          "$description": "Numeric font weight; bind to font weight.",
+          "$extensions": {
+            "com.figma.variableId": "VariableID:26:11",
+            "com.figma.scopes": [
+              "ALL_SCOPES"
+            ]
+          }
+        },
+        "font-style": {
+          "$type": "string",
+          "$value": "SemiBold",
+          "$description": "For font-style binding; confirm installed font's exact style label.",
+          "$extensions": {
+            "com.figma.variableId": "VariableID:26:12",
+            "com.figma.scopes": [
+              "ALL_SCOPES"
+            ],
+            "com.figma.type": "string"
+          }
+        },
+        "size": {
+          "$type": "number",
+          "$value": 40,
+          "$extensions": {
+            "com.figma.variableId": "VariableID:26:13",
+            "com.figma.scopes": [
+              "ALL_SCOPES"
+            ]
+          }
+        },
+        "line-height": {
+          "$type": "number",
+          "$value": 50,
+          "$description": "Absolute pixel line height.",
+          "$extensions": {
+            "com.figma.variableId": "VariableID:26:14",
+            "com.figma.scopes": [
+              "ALL_SCOPES"
+            ]
+          }
+        },
+        "letter-spacing": {
+          "$type": "number",
+          "$value": -0.800000011920929,
+          "$description": "Absolute pixel tracking; use px, not percent.",
+          "$extensions": {
+            "com.figma.variableId": "VariableID:26:15",
+            "com.figma.scopes": [
+              "ALL_SCOPES"
+            ]
+          }
+        }
+      },
+      "sm": {
+        "family": {
+          "$type": "string",
+          "$value": "Unbounded",
+          "$extensions": {
+            "com.figma.variableId": "VariableID:26:16",
+            "com.figma.scopes": [
+              "ALL_SCOPES"
+            ],
+            "com.figma.type": "string"
+          }
+        },
+        "weight": {
+          "$type": "number",
+          "$value": 600,
+          "$description": "Numeric font weight; bind to font weight.",
+          "$extensions": {
+            "com.figma.variableId": "VariableID:26:17",
+            "com.figma.scopes": [
+              "ALL_SCOPES"
+            ]
+          }
+        },
+        "font-style": {
+          "$type": "string",
+          "$value": "SemiBold",
+          "$description": "For font-style binding; confirm installed font's exact style label.",
+          "$extensions": {
+            "com.figma.variableId": "VariableID:26:18",
+            "com.figma.scopes": [
+              "ALL_SCOPES"
+            ],
+            "com.figma.type": "string"
+          }
+        },
+        "size": {
+          "$type": "number",
+          "$value": 32,
+          "$extensions": {
+            "com.figma.variableId": "VariableID:26:19",
+            "com.figma.scopes": [
+              "ALL_SCOPES"
+            ]
+          }
+        },
+        "line-height": {
+          "$type": "number",
+          "$value": 42,
+          "$description": "Absolute pixel line height.",
+          "$extensions": {
+            "com.figma.variableId": "VariableID:26:20",
+            "com.figma.scopes": [
+              "ALL_SCOPES"
+            ]
+          }
+        },
+        "letter-spacing": {
+          "$type": "number",
+          "$value": -0.6399999856948853,
+          "$description": "Absolute pixel tracking; use px, not percent.",
+          "$extensions": {
+            "com.figma.variableId": "VariableID:26:21",
+            "com.figma.scopes": [
+              "ALL_SCOPES"
+            ]
+          }
+        }
+      }
+    },
+    "heading": {
+      "h1": {
+        "family": {
+          "$type": "string",
+          "$value": "Unbounded",
+          "$extensions": {
+            "com.figma.variableId": "VariableID:26:22",
+            "com.figma.scopes": [
+              "ALL_SCOPES"
+            ],
+            "com.figma.type": "string"
+          }
+        },
+        "weight": {
+          "$type": "number",
+          "$value": 600,
+          "$description": "Numeric font weight; bind to font weight.",
+          "$extensions": {
+            "com.figma.variableId": "VariableID:26:23",
+            "com.figma.scopes": [
+              "ALL_SCOPES"
+            ]
+          }
+        },
+        "font-style": {
+          "$type": "string",
+          "$value": "SemiBold",
+          "$description": "For font-style binding; confirm installed font's exact style label.",
+          "$extensions": {
+            "com.figma.variableId": "VariableID:26:24",
+            "com.figma.scopes": [
+              "ALL_SCOPES"
+            ],
+            "com.figma.type": "string"
+          }
+        },
+        "size": {
+          "$type": "number",
+          "$value": 32,
+          "$extensions": {
+            "com.figma.variableId": "VariableID:26:25",
+            "com.figma.scopes": [
+              "ALL_SCOPES"
+            ]
+          }
+        },
+        "line-height": {
+          "$type": "number",
+          "$value": 42,
+          "$description": "Absolute pixel line height.",
+          "$extensions": {
+            "com.figma.variableId": "VariableID:26:26",
+            "com.figma.scopes": [
+              "ALL_SCOPES"
+            ]
+          }
+        },
+        "letter-spacing": {
+          "$type": "number",
+          "$value": -0.6399999856948853,
+          "$description": "Absolute pixel tracking; use px, not percent.",
+          "$extensions": {
+            "com.figma.variableId": "VariableID:26:27",
+            "com.figma.scopes": [
+              "ALL_SCOPES"
+            ]
+          }
+        }
+      },
+      "h2": {
+        "family": {
+          "$type": "string",
+          "$value": "Unbounded",
+          "$extensions": {
+            "com.figma.variableId": "VariableID:26:28",
+            "com.figma.scopes": [
+              "ALL_SCOPES"
+            ],
+            "com.figma.type": "string"
+          }
+        },
+        "weight": {
+          "$type": "number",
+          "$value": 600,
+          "$description": "Numeric font weight; bind to font weight.",
+          "$extensions": {
+            "com.figma.variableId": "VariableID:26:29",
+            "com.figma.scopes": [
+              "ALL_SCOPES"
+            ]
+          }
+        },
+        "font-style": {
+          "$type": "string",
+          "$value": "SemiBold",
+          "$description": "For font-style binding; confirm installed font's exact style label.",
+          "$extensions": {
+            "com.figma.variableId": "VariableID:26:30",
+            "com.figma.scopes": [
+              "ALL_SCOPES"
+            ],
+            "com.figma.type": "string"
+          }
+        },
+        "size": {
+          "$type": "number",
+          "$value": 28,
+          "$extensions": {
+            "com.figma.variableId": "VariableID:26:31",
+            "com.figma.scopes": [
+              "ALL_SCOPES"
+            ]
+          }
+        },
+        "line-height": {
+          "$type": "number",
+          "$value": 38,
+          "$description": "Absolute pixel line height.",
+          "$extensions": {
+            "com.figma.variableId": "VariableID:26:32",
+            "com.figma.scopes": [
+              "ALL_SCOPES"
+            ]
+          }
+        },
+        "letter-spacing": {
+          "$type": "number",
+          "$value": -0.5600000023841858,
+          "$description": "Absolute pixel tracking; use px, not percent.",
+          "$extensions": {
+            "com.figma.variableId": "VariableID:26:33",
+            "com.figma.scopes": [
+              "ALL_SCOPES"
+            ]
+          }
+        }
+      },
+      "h3": {
+        "family": {
+          "$type": "string",
+          "$value": "Unbounded",
+          "$extensions": {
+            "com.figma.variableId": "VariableID:26:34",
+            "com.figma.scopes": [
+              "ALL_SCOPES"
+            ],
+            "com.figma.type": "string"
+          }
+        },
+        "weight": {
+          "$type": "number",
+          "$value": 500,
+          "$description": "Numeric font weight; bind to font weight.",
+          "$extensions": {
+            "com.figma.variableId": "VariableID:26:35",
+            "com.figma.scopes": [
+              "ALL_SCOPES"
+            ]
+          }
+        },
+        "font-style": {
+          "$type": "string",
+          "$value": "Medium",
+          "$description": "For font-style binding; confirm installed font's exact style label.",
+          "$extensions": {
+            "com.figma.variableId": "VariableID:26:36",
+            "com.figma.scopes": [
+              "ALL_SCOPES"
+            ],
+            "com.figma.type": "string"
+          }
+        },
+        "size": {
+          "$type": "number",
+          "$value": 24,
+          "$extensions": {
+            "com.figma.variableId": "VariableID:26:37",
+            "com.figma.scopes": [
+              "ALL_SCOPES"
+            ]
+          }
+        },
+        "line-height": {
+          "$type": "number",
+          "$value": 34,
+          "$description": "Absolute pixel line height.",
+          "$extensions": {
+            "com.figma.variableId": "VariableID:26:38",
+            "com.figma.scopes": [
+              "ALL_SCOPES"
+            ]
+          }
+        },
+        "letter-spacing": {
+          "$type": "number",
+          "$value": -0.23999999463558197,
+          "$description": "Absolute pixel tracking; use px, not percent.",
+          "$extensions": {
+            "com.figma.variableId": "VariableID:26:39",
+            "com.figma.scopes": [
+              "ALL_SCOPES"
+            ]
+          }
+        }
+      },
+      "h4": {
+        "family": {
+          "$type": "string",
+          "$value": "Unbounded",
+          "$extensions": {
+            "com.figma.variableId": "VariableID:26:40",
+            "com.figma.scopes": [
+              "ALL_SCOPES"
+            ],
+            "com.figma.type": "string"
+          }
+        },
+        "weight": {
+          "$type": "number",
+          "$value": 500,
+          "$description": "Numeric font weight; bind to font weight.",
+          "$extensions": {
+            "com.figma.variableId": "VariableID:26:41",
+            "com.figma.scopes": [
+              "ALL_SCOPES"
+            ]
+          }
+        },
+        "font-style": {
+          "$type": "string",
+          "$value": "Medium",
+          "$description": "For font-style binding; confirm installed font's exact style label.",
+          "$extensions": {
+            "com.figma.variableId": "VariableID:26:42",
+            "com.figma.scopes": [
+              "ALL_SCOPES"
+            ],
+            "com.figma.type": "string"
+          }
+        },
+        "size": {
+          "$type": "number",
+          "$value": 20,
+          "$extensions": {
+            "com.figma.variableId": "VariableID:26:43",
+            "com.figma.scopes": [
+              "ALL_SCOPES"
+            ]
+          }
+        },
+        "line-height": {
+          "$type": "number",
+          "$value": 30,
+          "$description": "Absolute pixel line height.",
+          "$extensions": {
+            "com.figma.variableId": "VariableID:26:44",
+            "com.figma.scopes": [
+              "ALL_SCOPES"
+            ]
+          }
+        },
+        "letter-spacing": {
+          "$type": "number",
+          "$value": -0.20000000298023224,
+          "$description": "Absolute pixel tracking; use px, not percent.",
+          "$extensions": {
+            "com.figma.variableId": "VariableID:26:45",
+            "com.figma.scopes": [
+              "ALL_SCOPES"
+            ]
+          }
+        }
+      },
+      "h5": {
+        "family": {
+          "$type": "string",
+          "$value": "Unbounded",
+          "$extensions": {
+            "com.figma.variableId": "VariableID:26:46",
+            "com.figma.scopes": [
+              "ALL_SCOPES"
+            ],
+            "com.figma.type": "string"
+          }
+        },
+        "weight": {
+          "$type": "number",
+          "$value": 500,
+          "$description": "Numeric font weight; bind to font weight.",
+          "$extensions": {
+            "com.figma.variableId": "VariableID:26:47",
+            "com.figma.scopes": [
+              "ALL_SCOPES"
+            ]
+          }
+        },
+        "font-style": {
+          "$type": "string",
+          "$value": "Medium",
+          "$description": "For font-style binding; confirm installed font's exact style label.",
+          "$extensions": {
+            "com.figma.variableId": "VariableID:26:48",
+            "com.figma.scopes": [
+              "ALL_SCOPES"
+            ],
+            "com.figma.type": "string"
+          }
+        },
+        "size": {
+          "$type": "number",
+          "$value": 18,
+          "$extensions": {
+            "com.figma.variableId": "VariableID:26:49",
+            "com.figma.scopes": [
+              "ALL_SCOPES"
+            ]
+          }
+        },
+        "line-height": {
+          "$type": "number",
+          "$value": 28,
+          "$description": "Absolute pixel line height.",
+          "$extensions": {
+            "com.figma.variableId": "VariableID:26:50",
+            "com.figma.scopes": [
+              "ALL_SCOPES"
+            ]
+          }
+        },
+        "letter-spacing": {
+          "$type": "number",
+          "$value": 0,
+          "$description": "Absolute pixel tracking; use px, not percent.",
+          "$extensions": {
+            "com.figma.variableId": "VariableID:26:51",
+            "com.figma.scopes": [
+              "ALL_SCOPES"
+            ]
+          }
+        }
+      },
+      "h6": {
+        "family": {
+          "$type": "string",
+          "$value": "Unbounded",
+          "$extensions": {
+            "com.figma.variableId": "VariableID:26:52",
+            "com.figma.scopes": [
+              "ALL_SCOPES"
+            ],
+            "com.figma.type": "string"
+          }
+        },
+        "weight": {
+          "$type": "number",
+          "$value": 500,
+          "$description": "Numeric font weight; bind to font weight.",
+          "$extensions": {
+            "com.figma.variableId": "VariableID:26:53",
+            "com.figma.scopes": [
+              "ALL_SCOPES"
+            ]
+          }
+        },
+        "font-style": {
+          "$type": "string",
+          "$value": "Medium",
+          "$description": "For font-style binding; confirm installed font's exact style label.",
+          "$extensions": {
+            "com.figma.variableId": "VariableID:26:54",
+            "com.figma.scopes": [
+              "ALL_SCOPES"
+            ],
+            "com.figma.type": "string"
+          }
+        },
+        "size": {
+          "$type": "number",
+          "$value": 16,
+          "$extensions": {
+            "com.figma.variableId": "VariableID:26:55",
+            "com.figma.scopes": [
+              "ALL_SCOPES"
+            ]
+          }
+        },
+        "line-height": {
+          "$type": "number",
+          "$value": 26,
+          "$description": "Absolute pixel line height.",
+          "$extensions": {
+            "com.figma.variableId": "VariableID:26:56",
+            "com.figma.scopes": [
+              "ALL_SCOPES"
+            ]
+          }
+        },
+        "letter-spacing": {
+          "$type": "number",
+          "$value": 0,
+          "$description": "Absolute pixel tracking; use px, not percent.",
+          "$extensions": {
+            "com.figma.variableId": "VariableID:26:57",
+            "com.figma.scopes": [
+              "ALL_SCOPES"
+            ]
+          }
+        }
+      }
+    },
+    "body": {
+      "lg": {
+        "family": {
+          "$type": "string",
+          "$value": "Albert Sans",
+          "$extensions": {
+            "com.figma.variableId": "VariableID:26:58",
+            "com.figma.scopes": [
+              "ALL_SCOPES"
+            ],
+            "com.figma.type": "string"
+          }
+        },
+        "weight": {
+          "$type": "number",
+          "$value": 400,
+          "$description": "Numeric font weight; bind to font weight.",
+          "$extensions": {
+            "com.figma.variableId": "VariableID:26:59",
+            "com.figma.scopes": [
+              "ALL_SCOPES"
+            ]
+          }
+        },
+        "font-style": {
+          "$type": "string",
+          "$value": "Regular",
+          "$description": "For font-style binding; confirm installed font's exact style label.",
+          "$extensions": {
+            "com.figma.variableId": "VariableID:26:60",
+            "com.figma.scopes": [
+              "ALL_SCOPES"
+            ],
+            "com.figma.type": "string"
+          }
+        },
+        "size": {
+          "$type": "number",
+          "$value": 18,
+          "$extensions": {
+            "com.figma.variableId": "VariableID:26:61",
+            "com.figma.scopes": [
+              "ALL_SCOPES"
+            ]
+          }
+        },
+        "line-height": {
+          "$type": "number",
+          "$value": 28,
+          "$description": "Absolute pixel line height.",
+          "$extensions": {
+            "com.figma.variableId": "VariableID:26:62",
+            "com.figma.scopes": [
+              "ALL_SCOPES"
+            ]
+          }
+        },
+        "letter-spacing": {
+          "$type": "number",
+          "$value": 0,
+          "$description": "Absolute pixel tracking; use px, not percent.",
+          "$extensions": {
+            "com.figma.variableId": "VariableID:26:63",
+            "com.figma.scopes": [
+              "ALL_SCOPES"
+            ]
+          }
+        }
+      },
+      "md": {
+        "family": {
+          "$type": "string",
+          "$value": "Albert Sans",
+          "$extensions": {
+            "com.figma.variableId": "VariableID:26:64",
+            "com.figma.scopes": [
+              "ALL_SCOPES"
+            ],
+            "com.figma.type": "string"
+          }
+        },
+        "weight": {
+          "$type": "number",
+          "$value": 400,
+          "$description": "Numeric font weight; bind to font weight.",
+          "$extensions": {
+            "com.figma.variableId": "VariableID:26:65",
+            "com.figma.scopes": [
+              "ALL_SCOPES"
+            ]
+          }
+        },
+        "font-style": {
+          "$type": "string",
+          "$value": "Regular",
+          "$description": "For font-style binding; confirm installed font's exact style label.",
+          "$extensions": {
+            "com.figma.variableId": "VariableID:26:66",
+            "com.figma.scopes": [
+              "ALL_SCOPES"
+            ],
+            "com.figma.type": "string"
+          }
+        },
+        "size": {
+          "$type": "number",
+          "$value": 16,
+          "$extensions": {
+            "com.figma.variableId": "VariableID:26:67",
+            "com.figma.scopes": [
+              "ALL_SCOPES"
+            ]
+          }
+        },
+        "line-height": {
+          "$type": "number",
+          "$value": 24,
+          "$description": "Absolute pixel line height.",
+          "$extensions": {
+            "com.figma.variableId": "VariableID:26:68",
+            "com.figma.scopes": [
+              "ALL_SCOPES"
+            ]
+          }
+        },
+        "letter-spacing": {
+          "$type": "number",
+          "$value": 0,
+          "$description": "Absolute pixel tracking; use px, not percent.",
+          "$extensions": {
+            "com.figma.variableId": "VariableID:26:69",
+            "com.figma.scopes": [
+              "ALL_SCOPES"
+            ]
+          }
+        }
+      },
+      "sm": {
+        "family": {
+          "$type": "string",
+          "$value": "Albert Sans",
+          "$extensions": {
+            "com.figma.variableId": "VariableID:26:70",
+            "com.figma.scopes": [
+              "ALL_SCOPES"
+            ],
+            "com.figma.type": "string"
+          }
+        },
+        "weight": {
+          "$type": "number",
+          "$value": 400,
+          "$description": "Numeric font weight; bind to font weight.",
+          "$extensions": {
+            "com.figma.variableId": "VariableID:26:71",
+            "com.figma.scopes": [
+              "ALL_SCOPES"
+            ]
+          }
+        },
+        "font-style": {
+          "$type": "string",
+          "$value": "Regular",
+          "$description": "For font-style binding; confirm installed font's exact style label.",
+          "$extensions": {
+            "com.figma.variableId": "VariableID:26:72",
+            "com.figma.scopes": [
+              "ALL_SCOPES"
+            ],
+            "com.figma.type": "string"
+          }
+        },
+        "size": {
+          "$type": "number",
+          "$value": 14,
+          "$extensions": {
+            "com.figma.variableId": "VariableID:26:73",
+            "com.figma.scopes": [
+              "ALL_SCOPES"
+            ]
+          }
+        },
+        "line-height": {
+          "$type": "number",
+          "$value": 22,
+          "$description": "Absolute pixel line height.",
+          "$extensions": {
+            "com.figma.variableId": "VariableID:26:74",
+            "com.figma.scopes": [
+              "ALL_SCOPES"
+            ]
+          }
+        },
+        "letter-spacing": {
+          "$type": "number",
+          "$value": 0,
+          "$description": "Absolute pixel tracking; use px, not percent.",
+          "$extensions": {
+            "com.figma.variableId": "VariableID:26:75",
+            "com.figma.scopes": [
+              "ALL_SCOPES"
+            ]
+          }
+        }
+      }
+    },
+    "label": {
+      "lg": {
+        "family": {
+          "$type": "string",
+          "$value": "Albert Sans",
+          "$extensions": {
+            "com.figma.variableId": "VariableID:26:76",
+            "com.figma.scopes": [
+              "ALL_SCOPES"
+            ],
+            "com.figma.type": "string"
+          }
+        },
+        "weight": {
+          "$type": "number",
+          "$value": 600,
+          "$description": "Numeric font weight; bind to font weight.",
+          "$extensions": {
+            "com.figma.variableId": "VariableID:26:77",
+            "com.figma.scopes": [
+              "ALL_SCOPES"
+            ]
+          }
+        },
+        "font-style": {
+          "$type": "string",
+          "$value": "SemiBold",
+          "$description": "For font-style binding; confirm installed font's exact style label.",
+          "$extensions": {
+            "com.figma.variableId": "VariableID:26:78",
+            "com.figma.scopes": [
+              "ALL_SCOPES"
+            ],
+            "com.figma.type": "string"
+          }
+        },
+        "size": {
+          "$type": "number",
+          "$value": 16,
+          "$extensions": {
+            "com.figma.variableId": "VariableID:26:79",
+            "com.figma.scopes": [
+              "ALL_SCOPES"
+            ]
+          }
+        },
+        "line-height": {
+          "$type": "number",
+          "$value": 24,
+          "$description": "Absolute pixel line height.",
+          "$extensions": {
+            "com.figma.variableId": "VariableID:26:80",
+            "com.figma.scopes": [
+              "ALL_SCOPES"
+            ]
+          }
+        },
+        "letter-spacing": {
+          "$type": "number",
+          "$value": 0,
+          "$description": "Absolute pixel tracking; use px, not percent.",
+          "$extensions": {
+            "com.figma.variableId": "VariableID:26:81",
+            "com.figma.scopes": [
+              "ALL_SCOPES"
+            ]
+          }
+        }
+      },
+      "md": {
+        "family": {
+          "$type": "string",
+          "$value": "Albert Sans",
+          "$extensions": {
+            "com.figma.variableId": "VariableID:26:82",
+            "com.figma.scopes": [
+              "ALL_SCOPES"
+            ],
+            "com.figma.type": "string"
+          }
+        },
+        "weight": {
+          "$type": "number",
+          "$value": 600,
+          "$description": "Numeric font weight; bind to font weight.",
+          "$extensions": {
+            "com.figma.variableId": "VariableID:26:83",
+            "com.figma.scopes": [
+              "ALL_SCOPES"
+            ]
+          }
+        },
+        "font-style": {
+          "$type": "string",
+          "$value": "SemiBold",
+          "$description": "For font-style binding; confirm installed font's exact style label.",
+          "$extensions": {
+            "com.figma.variableId": "VariableID:26:84",
+            "com.figma.scopes": [
+              "ALL_SCOPES"
+            ],
+            "com.figma.type": "string"
+          }
+        },
+        "size": {
+          "$type": "number",
+          "$value": 14,
+          "$extensions": {
+            "com.figma.variableId": "VariableID:26:85",
+            "com.figma.scopes": [
+              "ALL_SCOPES"
+            ]
+          }
+        },
+        "line-height": {
+          "$type": "number",
+          "$value": 20,
+          "$description": "Absolute pixel line height.",
+          "$extensions": {
+            "com.figma.variableId": "VariableID:26:86",
+            "com.figma.scopes": [
+              "ALL_SCOPES"
+            ]
+          }
+        },
+        "letter-spacing": {
+          "$type": "number",
+          "$value": 0,
+          "$description": "Absolute pixel tracking; use px, not percent.",
+          "$extensions": {
+            "com.figma.variableId": "VariableID:26:87",
+            "com.figma.scopes": [
+              "ALL_SCOPES"
+            ]
+          }
+        }
+      },
+      "sm": {
+        "family": {
+          "$type": "string",
+          "$value": "Albert Sans",
+          "$extensions": {
+            "com.figma.variableId": "VariableID:26:88",
+            "com.figma.scopes": [
+              "ALL_SCOPES"
+            ],
+            "com.figma.type": "string"
+          }
+        },
+        "weight": {
+          "$type": "number",
+          "$value": 600,
+          "$description": "Numeric font weight; bind to font weight.",
+          "$extensions": {
+            "com.figma.variableId": "VariableID:26:89",
+            "com.figma.scopes": [
+              "ALL_SCOPES"
+            ]
+          }
+        },
+        "font-style": {
+          "$type": "string",
+          "$value": "SemiBold",
+          "$description": "For font-style binding; confirm installed font's exact style label.",
+          "$extensions": {
+            "com.figma.variableId": "VariableID:26:90",
+            "com.figma.scopes": [
+              "ALL_SCOPES"
+            ],
+            "com.figma.type": "string"
+          }
+        },
+        "size": {
+          "$type": "number",
+          "$value": 12,
+          "$extensions": {
+            "com.figma.variableId": "VariableID:26:91",
+            "com.figma.scopes": [
+              "ALL_SCOPES"
+            ]
+          }
+        },
+        "line-height": {
+          "$type": "number",
+          "$value": 16,
+          "$description": "Absolute pixel line height.",
+          "$extensions": {
+            "com.figma.variableId": "VariableID:26:92",
+            "com.figma.scopes": [
+              "ALL_SCOPES"
+            ]
+          }
+        },
+        "letter-spacing": {
+          "$type": "number",
+          "$value": 0,
+          "$description": "Absolute pixel tracking; use px, not percent.",
+          "$extensions": {
+            "com.figma.variableId": "VariableID:26:93",
+            "com.figma.scopes": [
+              "ALL_SCOPES"
+            ]
+          }
+        }
+      }
+    },
+    "caption": {
+      "family": {
+        "$type": "string",
+        "$value": "Albert Sans",
+        "$extensions": {
+          "com.figma.variableId": "VariableID:26:94",
+          "com.figma.scopes": [
+            "ALL_SCOPES"
+          ],
+          "com.figma.type": "string"
+        }
+      },
+      "weight": {
+        "$type": "number",
+        "$value": 400,
+        "$description": "Numeric font weight; bind to font weight.",
+        "$extensions": {
+          "com.figma.variableId": "VariableID:26:95",
+          "com.figma.scopes": [
+            "ALL_SCOPES"
+          ]
+        }
+      },
+      "font-style": {
+        "$type": "string",
+        "$value": "Regular",
+        "$description": "For font-style binding; confirm installed font's exact style label.",
+        "$extensions": {
+          "com.figma.variableId": "VariableID:26:96",
+          "com.figma.scopes": [
+            "ALL_SCOPES"
+          ],
+          "com.figma.type": "string"
+        }
+      },
+      "size": {
+        "$type": "number",
+        "$value": 12,
+        "$extensions": {
+          "com.figma.variableId": "VariableID:26:97",
+          "com.figma.scopes": [
+            "ALL_SCOPES"
+          ]
+        }
+      },
+      "line-height": {
+        "$type": "number",
+        "$value": 18,
+        "$description": "Absolute pixel line height.",
+        "$extensions": {
+          "com.figma.variableId": "VariableID:26:98",
+          "com.figma.scopes": [
+            "ALL_SCOPES"
+          ]
+        }
+      },
+      "letter-spacing": {
+        "$type": "number",
+        "$value": 0,
+        "$description": "Absolute pixel tracking; use px, not percent.",
+        "$extensions": {
+          "com.figma.variableId": "VariableID:26:99",
+          "com.figma.scopes": [
+            "ALL_SCOPES"
+          ]
+        }
+      }
+    },
+    "code": {
+      "md": {
+        "family": {
+          "$type": "string",
+          "$value": "monospace",
+          "$extensions": {
+            "com.figma.variableId": "VariableID:26:100",
+            "com.figma.scopes": [
+              "ALL_SCOPES"
+            ],
+            "com.figma.type": "string"
+          }
+        },
+        "weight": {
+          "$type": "number",
+          "$value": 400,
+          "$description": "Numeric font weight; bind to font weight.",
+          "$extensions": {
+            "com.figma.variableId": "VariableID:26:101",
+            "com.figma.scopes": [
+              "ALL_SCOPES"
+            ]
+          }
+        },
+        "font-style": {
+          "$type": "string",
+          "$value": "Regular",
+          "$description": "For font-style binding; confirm installed font's exact style label.",
+          "$extensions": {
+            "com.figma.variableId": "VariableID:26:102",
+            "com.figma.scopes": [
+              "ALL_SCOPES"
+            ],
+            "com.figma.type": "string"
+          }
+        },
+        "size": {
+          "$type": "number",
+          "$value": 14,
+          "$extensions": {
+            "com.figma.variableId": "VariableID:26:103",
+            "com.figma.scopes": [
+              "ALL_SCOPES"
+            ]
+          }
+        },
+        "line-height": {
+          "$type": "number",
+          "$value": 22,
+          "$description": "Absolute pixel line height.",
+          "$extensions": {
+            "com.figma.variableId": "VariableID:26:104",
+            "com.figma.scopes": [
+              "ALL_SCOPES"
+            ]
+          }
+        },
+        "letter-spacing": {
+          "$type": "number",
+          "$value": 0,
+          "$description": "Absolute pixel tracking; use px, not percent.",
+          "$extensions": {
+            "com.figma.variableId": "VariableID:26:105",
+            "com.figma.scopes": [
+              "ALL_SCOPES"
+            ]
+          }
+        }
+      },
+      "sm": {
+        "family": {
+          "$type": "string",
+          "$value": "monospace",
+          "$extensions": {
+            "com.figma.variableId": "VariableID:26:106",
+            "com.figma.scopes": [
+              "ALL_SCOPES"
+            ],
+            "com.figma.type": "string"
+          }
+        },
+        "weight": {
+          "$type": "number",
+          "$value": 400,
+          "$description": "Numeric font weight; bind to font weight.",
+          "$extensions": {
+            "com.figma.variableId": "VariableID:26:107",
+            "com.figma.scopes": [
+              "ALL_SCOPES"
+            ]
+          }
+        },
+        "font-style": {
+          "$type": "string",
+          "$value": "Regular",
+          "$description": "For font-style binding; confirm installed font's exact style label.",
+          "$extensions": {
+            "com.figma.variableId": "VariableID:26:108",
+            "com.figma.scopes": [
+              "ALL_SCOPES"
+            ],
+            "com.figma.type": "string"
+          }
+        },
+        "size": {
+          "$type": "number",
+          "$value": 12,
+          "$extensions": {
+            "com.figma.variableId": "VariableID:26:109",
+            "com.figma.scopes": [
+              "ALL_SCOPES"
+            ]
+          }
+        },
+        "line-height": {
+          "$type": "number",
+          "$value": 18,
+          "$description": "Absolute pixel line height.",
+          "$extensions": {
+            "com.figma.variableId": "VariableID:26:110",
+            "com.figma.scopes": [
+              "ALL_SCOPES"
+            ]
+          }
+        },
+        "letter-spacing": {
+          "$type": "number",
+          "$value": 0,
+          "$description": "Absolute pixel tracking; use px, not percent.",
+          "$extensions": {
+            "com.figma.variableId": "VariableID:26:111",
+            "com.figma.scopes": [
+              "ALL_SCOPES"
+            ]
+          }
+        }
+      }
+    }
+  },
+  "$extensions": {
+    "com.figma.modeName": "Mobile"
+  }
+}

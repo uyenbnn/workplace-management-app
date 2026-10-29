@@ -1,0 +1,107 @@
+﻿<main>
+  <div class="page-heading">
+    <div>
+      <p class="eyebrow">WORKPLACE / YOUR DAILY RECORD</p>
+      <h1>Worklog tracker<span class="heading-dot">.</span></h1>
+      <p class="subtitle">A little structure for every workday.</p>
+    </div>
+    <button
+      type="button"
+      class="local-badge"
+      [disabled]="store.editing() || !store.document()"
+      (click)="openTransfer()"
+    >
+      <span class="material-symbols-outlined" aria-hidden="true">import_export</span> Import /
+      Export
+    </button>
+  </div>
+  <div class="calendar-toolbar">
+    <div
+      class="view-switch"
+      [class.week-active]="view() === 'work-week'"
+      role="group"
+      aria-label="Calendar view"
+    >
+      <button
+        type="button"
+        [attr.aria-pressed]="view() === 'month'"
+        [disabled]="store.editing()"
+        (click)="setView('month')"
+      >
+        Month
+      </button>
+      <button
+        type="button"
+        [attr.aria-pressed]="view() === 'work-week'"
+        [disabled]="store.editing()"
+        (click)="setView('work-week')"
+      >
+        Work week
+      </button>
+    </div>
+    <div
+      class="summary"
+      [attr.aria-label]="view() === 'month' ? 'Monthly summary' : 'Work-week summary'"
+    >
+      <div>
+        <strong>{{ totals().count }}</strong
+        ><span>Work items</span>
+      </div>
+      <div>
+        <strong>{{ totals().hours }}<small> h</small></strong
+        ><span>Time recorded</span>
+      </div>
+      <div>
+        <strong>{{ totals().logged }}</strong
+        ><span>Logged externally</span>
+      </div>
+    </div>
+  </div>
+  @if (store.error()) {
+    <div class="error" role="alert">
+      <p>{{ store.error() }}</p>
+      <button type="button" (click)="store.load()">Reload worklog</button>
+    </div>
+  }
+  @if (preferenceError()) {
+    <p role="status">{{ preferenceError() }}</p>
+  }
+  <app-month-navigation
+    [label]="periodLabel()"
+    [period]="view() === 'month' ? 'month' : 'work week'"
+    (move)="move($event)"
+    (today)="goToday()"
+  />
+  <section
+    class="calendar"
+    [class.work-week]="view() === 'work-week'"
+    [attr.aria-label]="
+      view() === 'month' ? 'Monthly worklog calendar' : 'Work-week worklog calendar'
+    "
+  >
+    <div class="weekday-row">
+      @for (day of view() === 'month' ? weekdays : weekdays.slice(0, 5); track day) {
+        <span>{{ day }}</span>
+      }
+    </div>
+    <div class="days">
+      @for (cell of cells(); track cell.date) {
+        <app-day-cell
+          [date]="cell.date"
+          [layout]="view()"
+          [items]="cell.items"
+          [off]="cell.off"
+          [today]="cell.today"
+          [outside]="cell.outside"
+          [selected]="selected() === cell.date"
+          (open)="open(cell.date, $event)"
+          (openTodos)="open(cell.date, undefined, 'todo')"
+        />
+      }
+    </div>
+  </section>
+  <footer>
+    <span>Weekdays start with a meeting and a task. Make them yours.</span
+    ><span>Local storage only &middot; Clearing browser data removes your worklog.</span>
+  </footer>
+</main>

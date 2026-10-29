@@ -1,0 +1,55 @@
+// Shared appearance for the calendar view switch and day-dialog tabs.
+@mixin control($active-class) {
+  & {
+    position: relative;
+    isolation: isolate;
+    display: inline-grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    width: min(100%, 17rem);
+    padding: 0.25rem;
+    flex-shrink: 0;
+    border-radius: var(--radius-pill);
+    background: var(--color-action-neutral-background-hover);
+  }
+  &::before {
+    content: '';
+    position: absolute;
+    z-index: -1;
+    top: 0.25rem;
+    bottom: 0.25rem;
+    left: 0.25rem;
+    width: calc(50% - 0.25rem);
+    border-radius: var(--radius-pill);
+    background: var(--color-surface-default);
+    transition: transform 180ms ease;
+  }
+  &.#{$active-class}::before {
+    transform: translateX(100%);
+  }
+  & button {
+    min-height: 2.75rem;
+    padding: 0.6rem 1rem;
+    border: 0;
+    background: transparent;
+    color: var(--color-text-secondary);
+    font-weight: 500;
+    transition: color 180ms ease;
+  }
+  & button[aria-pressed='true'],
+  & button[aria-selected='true'] {
+    color: var(--color-action-primary-background-hover);
+    font-weight: 600;
+  }
+  & button:hover:not(:disabled) {
+    color: var(--color-action-primary-background-hover);
+  }
+  & button:disabled {
+    color: var(--color-text-secondary);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    &::before,
+    & button {
+      transition: none;
+    }
+  }
+}

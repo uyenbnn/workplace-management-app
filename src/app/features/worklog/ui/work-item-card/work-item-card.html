@@ -1,0 +1,15 @@
+<button
+  type="button"
+  class="item-card"
+  [class.meeting]="item().type === 'MEETING'"
+  (click)="$event.stopPropagation(); choose.emit(item().id)"
+>
+  <span class="item-title" [title]="title()">{{ title() }}</span
+  ><span class="item-meta">{{ hours() }} h · {{ status() }}</span
+  ><span class="item-meta" [class.logged]="item().timeLog">
+    @if (item().timeLog) {
+      <span class="material-symbols-outlined" aria-hidden="true">check</span>
+    }
+    {{ item().timeLog ? 'Logged' : 'Not logged' }}</span
+  >
+</button>

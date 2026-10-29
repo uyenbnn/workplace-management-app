@@ -1,0 +1,69 @@
+﻿<form
+  [formGroup]="form"
+  (ngSubmit)="submit()"
+  (focusout)="leaveForm($event)"
+  (input)="changed.emit(true)"
+  (change)="changed.emit(true)"
+  novalidate
+>
+  @if (item().type === 'WORK_ON_TASK') {
+    <label for="task-name">Task name <span aria-hidden="true">*</span></label
+    ><input
+      id="task-name"
+      formControlName="name"
+      [attr.aria-invalid]="form.controls.name.invalid && form.controls.name.touched"
+      aria-describedby="name-error"
+    />
+    @if (form.controls.name.invalid && form.controls.name.touched) {
+      <p id="name-error" class="field-error">Enter a task name.</p>
+    }
+    <div class="form-row">
+      <div>
+        <label for="story-id">Story ID <span class="optional">Optional</span></label
+        ><input id="story-id" formControlName="storyId" />
+      </div>
+      <div>
+        <label for="points">Story points <span class="optional">Optional</span></label
+        ><input
+          id="points"
+          type="number"
+          min="0"
+          step="any"
+          formControlName="storyPoints"
+          aria-describedby="points-error"
+        />
+        @if (form.controls.storyPoints.invalid && form.controls.storyPoints.touched) {
+          <p id="points-error" class="field-error">Points must be nonnegative.</p>
+        }
+      </div>
+    </div>
+    <label for="status">Status</label
+    ><select id="status" formControlName="status" aria-describedby="status-hint">
+      <option value="TODO">To do</option>
+      <option value="IN_PROGRESS">In progress</option>
+      <option value="DONE">Done</option>
+    </select>
+    <p id="status-hint" class="hint">Changing status updates every task with the same story ID.</p>
+  }
+  <label for="hours">Time spent · hours</label
+  ><input
+    id="hours"
+    type="number"
+    min="0"
+    step="any"
+    formControlName="timeSpent"
+    aria-describedby="hours-error"
+    [attr.aria-invalid]="form.controls.timeSpent.invalid && form.controls.timeSpent.touched"
+  />
+  @if (form.controls.timeSpent.invalid && form.controls.timeSpent.touched) {
+    <p id="hours-error" class="field-error">Enter nonnegative hours, for example 0.5 or 1.5.</p>
+  }
+  <label class="checkbox"
+    ><input type="checkbox" formControlName="timeLog" /> Time logged in another system</label
+  >
+  <p class="hint">This is a record only. No time is sent to another service.</p>
+  <div class="form-actions">
+    <button type="button" (click)="cancelled.emit()">Cancel</button
+    ><button class="primary" type="submit">Save item</button>
+  </div>
+</form>
