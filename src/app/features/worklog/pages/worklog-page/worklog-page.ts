@@ -1,6 +1,7 @@
 ﻿import { TransferDialog } from '../../ui/transfer-dialog/transfer-dialog';
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { Dialog, DialogModule } from '@angular/cdk/dialog';
+import { DestroyRef } from '@angular/core';
 import { WorklogStore } from '../../data-access/worklog-store';
 import { WorklogView, WorklogViewPreference } from '../../data-access/worklog-view-preference';
 import {
@@ -26,6 +27,10 @@ import { DayDialog, DayDialogTab } from '../../ui/day-dialog/day-dialog';
 })
 export class WorklogPage {
   readonly store = inject(WorklogStore);
+  constructor() {
+    this.store.setBackgroundRefresh(true);
+    inject(DestroyRef).onDestroy(() => this.store.setBackgroundRefresh(false));
+  }
   private readonly dialogs = inject(Dialog);
   private readonly preference = inject(WorklogViewPreference);
   readonly view = signal<WorklogView>(this.preference.read());

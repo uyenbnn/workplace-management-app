@@ -28,7 +28,7 @@ export class TransferDialog {
     const document = this.store.document();
     if (text === null || !document) return null;
     try {
-      return { result: previewCsv(text, document), error: '' };
+      return { result: previewCsv(text), error: '' };
     } catch (error) {
       return { result: null, error: error instanceof Error ? error.message : 'Cannot parse CSV.' };
     }
@@ -37,8 +37,6 @@ export class TransferDialog {
     const rows = this.preview()?.result?.rows ?? [];
     return {
       new: rows.filter((row) => row.status === 'new').length,
-      identical: rows.filter((row) => row.status === 'identical').length,
-      conflicting: rows.filter((row) => row.status === 'conflicting').length,
       invalid: rows.filter((row) => row.status === 'invalid').length,
     };
   });
@@ -84,7 +82,9 @@ export class TransferDialog {
     try {
       const month = this.scope() === 'month' ? this.data.month : undefined;
       const url = URL.createObjectURL(
-        new Blob([exportCsv(document.items, month)], { type: 'text/csv;charset=utf-8' }),
+        new Blob([exportCsv(document.items, month, document.dayOffDates)], {
+          type: 'text/csv;charset=utf-8',
+        }),
       );
       const anchor = window.document.createElement('a');
       anchor.href = url;
@@ -98,12 +98,12 @@ export class TransferDialog {
   import(): void {
     const text = this.text();
     const preview = this.preview()?.result;
-    if (text === null || !preview || preview.invalid || !preview.additions.length) return;
-    const count = preview.additions.length;
+    if (text === null || !preview || preview.invalid) return;
+    const count = preview.count;
     if (this.store.importCsv(text)) {
       this.text.set(null);
       this.error.set('');
-      this.notice.set(`${count} entries imported.`);
+      this.notice.set(`Worklog replaced with ${count} CSV records.`);
     } else this.error.set(this.store.error());
   }
   async close(): Promise<void> {

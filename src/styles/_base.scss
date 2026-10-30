@@ -19,6 +19,12 @@
   --color-feedback-danger-text: var(--color-feedback-danger-foreground);
   --color-overlay-backdrop: color-mix(in srgb, var(--color-text-heading) 35%, transparent);
   --shadow-dialog: 0 20px 80px color-mix(in srgb, var(--color-text-heading) 20%, transparent);
+  // Form focus additions derived from the supplied primary focus color.
+  --color-field-focus-border: var(--color-focus-ring);
+  --color-field-focus-halo: color-mix(in srgb, var(--color-focus-ring) 12%, transparent);
+  --color-field-focus-glow: color-mix(in srgb, var(--color-focus-ring) 18%, transparent);
+  --shadow-field-focus:
+    0 0 0 3px var(--color-field-focus-halo), 0 0 14px var(--color-field-focus-glow);
 }
 * {
   box-sizing: border-box;
@@ -80,6 +86,12 @@ button.primary:active {
 :focus-visible {
   outline: 3px solid var(--color-focus-ring);
   outline-offset: 3px;
+}
+// :enabled keeps this shared state above Angular's scoped base input borders.
+:is(input:not([type='checkbox']):not([type='radio']), textarea, select):enabled:focus {
+  outline: none;
+  border-color: var(--color-field-focus-border);
+  box-shadow: var(--shadow-field-focus);
 }
 .actions {
   display: flex;
@@ -156,6 +168,12 @@ button.primary:active {
 @media (forced-colors: active) {
   * {
     scrollbar-color: auto;
+  }
+  :is(input:not([type='checkbox']):not([type='radio']), textarea, select):enabled:focus {
+    outline: 2px solid Highlight;
+    outline-offset: 2px;
+    border-color: Highlight;
+    box-shadow: none;
   }
 }
 

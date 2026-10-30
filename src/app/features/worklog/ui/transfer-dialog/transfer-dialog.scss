@@ -71,3 +71,13 @@ footer {
   justify-content: flex-end;
   border-top: 1px solid var(--color-border-default);
 }
+
+.icon-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  padding: 0;
+  margin-bottom: 1rem;
+}

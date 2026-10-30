@@ -154,3 +154,31 @@ with the old note field load with their titles, completion, IDs, dates, and audi
 drop legacy notes during normalization and omit them on the next successful document write.
 Do not overwrite storage on read or relax validation of other fields. This supersedes earlier
 TODO note requirements. No storage key change or reset is required.
+
+## CSV TODO and day-off transfer - approved 2026-10-30
+
+CSV now transfers meetings, tasks, title-only TODOs (including completion), and days off.
+This supersedes the earlier CSV exclusions. New exports append title,completed to the original
+nine columns; imports also accept legacy nine-column worklog exports. TODO rows have empty
+worklog fields. DAY_OFF rows have only date and type populated (no ID); dates are their identity.
+Month scope applies to all records. Existing IDs and day-off flags win; TODOs are allowed on days off.
+Day-off flags are additive and never delete worklogs: a flag conflicting with saved or incoming
+worklogs is previewed as conflicting and skipped. Worklogs on an already saved day off remain
+invalid; remove that flag explicitly first. Duplicate day-off dates and invalid TODO fields block
+the whole import. All additions commit atomically with revision protection and failed-save retention.
+Preferences and generation history remain local. Story statuses are not synchronized by import.
+
+## Full CSV replacement - approved 2026-10-30
+
+Import replaces the entire saved item collection (meetings, tasks, and TODOs) and day-off
+collection with the validated CSV, across all months. This supersedes all merge, skip,
+existing-entry-wins, and additive-day-off policies above. Saved IDs and day-off dates do not
+restrict incoming records. Duplicate IDs/dates, invalid fields, and a CSV containing both a
+worklog and DAY_OFF for the same date block replacement. TODOs may coexist with DAY_OFF.
+A valid header-only CSV clears all items and day-off flags. Legacy exports clear TODOs and
+days off because those records are absent. The preview and replacement button explicitly
+warn that absent records are removed, including for single-month exports.
+Replace in one revision-checked repository write; validation or storage failures preserve
+all saved data and the pending preview. Preserve generation start, seal all dates through
+import day and imported worklog dates as processed so removed defaults do not reappear.
+Normal generation continues on subsequent dates. Preferences remain unchanged.

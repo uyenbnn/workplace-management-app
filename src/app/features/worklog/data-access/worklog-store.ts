@@ -9,6 +9,7 @@ import {
   newTodo,
   reconcile,
   setDayOff,
+  shiftDate,
   validateValues,
   WorkItem,
   LoggedWorkItem,
@@ -24,8 +25,10 @@ export class WorklogStore {
   readonly today = signal(localDate());
   readonly editing = signal(false);
   private loaded = false;
+  private backgroundRefreshEnabled = true;
   constructor() {
     const refresh = () => {
+      if (!this.backgroundRefreshEnabled) return;
       this.today.set(localDate());
       if (!this.editing()) this.load();
     };
@@ -33,6 +36,7 @@ export class WorklogStore {
       if (document.visibilityState === 'visible') refresh();
     };
     const storage = (event: StorageEvent) => {
+      if (!this.backgroundRefreshEnabled) return;
       if (event.key === STORAGE_KEY || event.key === null) {
         if (this.editing())
           this.error.set(
@@ -67,6 +71,14 @@ export class WorklogStore {
       this.error.set('');
     } catch (error) {
       this.error.set(this.message(error));
+    }
+  }
+  setBackgroundRefresh(enabled: boolean): void {
+    const wasEnabled = this.backgroundRefreshEnabled;
+    this.backgroundRefreshEnabled = enabled;
+    if (enabled && !wasEnabled) {
+      this.today.set(localDate());
+      this.load();
     }
   }
   private message(error: unknown): string {
@@ -168,10 +180,19 @@ export class WorklogStore {
   }
   importCsv(text: string): boolean {
     return this.commit((document) => {
-      const preview = previewCsv(text, document);
+      const preview = previewCsv(text);
       if (preview.invalid) throw new Error('Correct all invalid CSV rows before importing.');
-      if (!preview.additions.length) throw new Error('No new entries to import.');
-      return { ...document, items: [...document.items, ...preview.additions] };
+      // Seal elapsed dates so replacement does not recreate removed defaults on reload.
+      const processed = new Set(document.processedDates);
+      for (let date = document.generationStartDate; date <= this.today(); date = shiftDate(date, 1))
+        processed.add(date);
+      preview.additions.forEach((item) => processed.add(item.date));
+      return {
+        ...document,
+        items: preview.additions,
+        dayOffDates: preview.dayOffAdditions,
+        processedDates: [...processed].sort(),
+      };
     });
   }
   remove(id: string): boolean {

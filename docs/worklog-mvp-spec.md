@@ -17,5 +17,8 @@ The specification is split into focused documents below. Scope and requirements 
 
 Start with the product overview for context. Review generation and days off alongside open decisions before implementation.
 
+Story statistics was approved on 2026-10-30. See [8. Story statistics](08-story-statistics.md)
+for the read-only Workplace reporting requirements, superseding the earlier reporting deferral.
+
 Daily TODO checklists were approved on 2026-10-27; see sections in Experience, Data, and Open
 decisions for the additive item variant and its exception to day-off removal.

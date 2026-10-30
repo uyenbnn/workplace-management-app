@@ -1,0 +1,15 @@
+<nav aria-label="Workplace navigation" [class.statistics-active]="statistics.isActive">
+  <a routerLink="/workplace/worklog" routerLinkActive="active" ariaCurrentWhenActive="page">
+    <span class="material-symbols-outlined" aria-hidden="true">calendar_month</span>
+    <span>Worklog tracker</span>
+  </a>
+  <a
+    routerLink="/workplace/statistic"
+    routerLinkActive="active"
+    #statistics="routerLinkActive"
+    ariaCurrentWhenActive="page"
+  >
+    <span class="material-symbols-outlined" aria-hidden="true">bar_chart</span>
+    <span>Statistics</span>
+  </a>
+</nav>

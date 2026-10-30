@@ -1,0 +1,170 @@
+<div
+  class="table-scroll"
+  role="region"
+  aria-label="Story statistics table"
+  tabindex="0"
+  cdkScrollable
+>
+  <table class="stories">
+    <thead>
+      <tr>
+        @for (column of columns; track column.key) {
+          <th scope="col" [attr.aria-sort]="ariaSort(column.key)">
+            <div class="column-heading">
+              <button
+                type="button"
+                class="sort-button"
+                [attr.aria-label]="'Sort by ' + column.label"
+                (click)="sortChange.emit(column.key)"
+              >
+                {{ column.label }}
+                <span class="material-symbols-outlined" aria-hidden="true">{{
+                  ariaSort(column.key) === 'none'
+                    ? 'unfold_more'
+                    : ariaSort(column.key) === 'ascending'
+                      ? 'arrow_upward'
+                      : 'arrow_downward'
+                }}</span>
+              </button>
+              <button
+                type="button"
+                class="filter-button"
+                cdkOverlayOrigin
+                #origin="cdkOverlayOrigin"
+                [class.is-filtered]="active(column.key)"
+                [attr.aria-label]="
+                  'Filter ' + column.label + (active(column.key) ? ' (active)' : '')
+                "
+                aria-haspopup="dialog"
+                [attr.aria-expanded]="openColumn() === column.key"
+                [attr.aria-controls]="openColumn() === column.key ? 'filter-' + column.key : null"
+                (click)="toggleFilter(column.key)"
+              >
+                <span class="material-symbols-outlined" aria-hidden="true">filter_list</span>
+                @if (active(column.key)) {
+                  <span class="filter-dot" aria-hidden="true"></span>
+                }
+              </button>
+            </div>
+            <ng-template
+              cdkConnectedOverlay
+              [cdkConnectedOverlayOrigin]="origin"
+              [cdkConnectedOverlayOpen]="openColumn() === column.key"
+              [cdkConnectedOverlayPositions]="positions"
+              [cdkConnectedOverlayPush]="true"
+              [cdkConnectedOverlayViewportMargin]="12"
+              (overlayOutsideClick)="close()"
+              (overlayKeydown)="keydown($event)"
+            >
+              <section
+                class="filter-popover"
+                role="dialog"
+                [id]="'filter-' + column.key"
+                [attr.aria-label]="'Filter ' + column.label"
+                cdkTrapFocus
+                [cdkTrapFocusAutoCapture]="true"
+              >
+                <h2>Filter {{ column.label }}</h2>
+                @if (column.key === 'story') {
+                  <label
+                    >Story ID contains
+                    <input
+                      cdkFocusInitial
+                      #storyInput
+                      type="text"
+                      [value]="drafts().story"
+                      (input)="editStory(storyInput.value)"
+                    />
+                  </label>
+                } @else {
+                  <label
+                    >Minimum {{ column.label.toLowerCase() }}
+                    <input
+                      cdkFocusInitial
+                      #minInput
+                      type="text"
+                      [attr.inputmode]="column.key === 'count' ? 'numeric' : 'decimal'"
+                      [value]="drafts()[column.key].min"
+                      [attr.aria-invalid]="errors()[column.key] ? 'true' : null"
+                      [attr.aria-describedby]="'filter-error-' + column.key"
+                      (input)="editRange(column.key, 'min', minInput.value)"
+                    />
+                  </label>
+                  <label
+                    >Maximum {{ column.label.toLowerCase() }}
+                    <input
+                      #maxInput
+                      type="text"
+                      [attr.inputmode]="column.key === 'count' ? 'numeric' : 'decimal'"
+                      [value]="drafts()[column.key].max"
+                      [attr.aria-invalid]="errors()[column.key] ? 'true' : null"
+                      [attr.aria-describedby]="'filter-error-' + column.key"
+                      (input)="editRange(column.key, 'max', maxInput.value)"
+                    />
+                  </label>
+                  <p [id]="'filter-error-' + column.key" class="filter-error" role="status">
+                    {{ errors()[column.key] }}
+                  </p>
+                  @if (errors()[column.key]) {
+                    <p class="hint">The last valid range is still applied.</p>
+                  }
+                }
+                <div class="popover-actions">
+                  <button type="button" (click)="clear(column.key)">Clear filter</button>
+                  <button type="button" (click)="close()">Close</button>
+                </div>
+              </section>
+            </ng-template>
+          </th>
+        }
+      </tr>
+    </thead>
+    <tbody>
+      @for (group of rows(); track group.storyId; let index = $index) {
+        <tr>
+          <th scope="row">
+            <button
+              type="button"
+              class="expand"
+              [attr.aria-expanded]="expanded().has(group.storyId)"
+              [attr.aria-controls]="'story-details-' + index"
+              (click)="expansionChange.emit(group.storyId)"
+            >
+              <span aria-hidden="true">{{ expanded().has(group.storyId) ? '-' : '+' }}</span>
+              {{ group.storyId || 'No story ID' }}
+            </button>
+          </th>
+          <td>{{ group.hours | number: '1.0-2' }} h</td>
+          <td>{{ group.count }}</td>
+        </tr>
+        <tr [hidden]="!expanded().has(group.storyId)" [id]="'story-details-' + index">
+          <td colspan="3" class="detail-cell">
+            @if (expanded().has(group.storyId)) {
+              <ul
+                class="entries"
+                [attr.aria-label]="'Matching entries for ' + (group.storyId || 'No story ID')"
+              >
+                @for (entry of group.entries; track entry.id) {
+                  <li>
+                    <time [attr.datetime]="entry.date">{{ entry.date }}</time
+                    ><strong>{{ entry.name || 'Untitled task' }}</strong>
+                    <span>{{ entry.timeSpent / 60 | number: '1.0-2' }} h</span
+                    ><span>{{ statusLabels[entry.status] }}</span>
+                    <span>{{ entry.timeLog ? 'Logged externally' : 'Not logged externally' }}</span>
+                  </li>
+                }
+              </ul>
+            }
+          </td>
+        </tr>
+      } @empty {
+        <tr>
+          <td colspan="3" class="empty">
+            <strong>No matching tasks</strong>
+            <p>Adjust or clear a column filter to see more stories.</p>
+          </td>
+        </tr>
+      }
+    </tbody>
+  </table>
+</div>

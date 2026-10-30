@@ -36,6 +36,39 @@ describe('Worklog state operations', () => {
     TestBed.resetTestingModule();
     vi.useRealTimers();
   });
+  it('suspends generation outside the tracker and resumes chronological backfill on return', () => {
+    const store = TestBed.inject(WorklogStore);
+    const write = vi.spyOn(repository, 'write');
+    const before = structuredClone(saved);
+    store.setBackgroundRefresh(false);
+    vi.setSystemTime(new Date(2026, 9, 28, 12));
+    window.dispatchEvent(new Event('focus'));
+    window.dispatchEvent(new StorageEvent('storage', { key: null }));
+    vi.advanceTimersByTime(30_000);
+    expect(write).not.toHaveBeenCalled();
+    expect(saved).toEqual(before);
+    store.setBackgroundRefresh(true);
+    expect(store.today()).toBe('2026-10-28');
+    expect(saved.items.filter((item) => item.date === '2026-10-27')).toHaveLength(2);
+    expect(saved.items.filter((item) => item.date === '2026-10-28')).toHaveLength(2);
+    expect(write).toHaveBeenCalledTimes(1);
+  });
+  it('persists imported TODOs and days off atomically and retains state on failure', () => {
+    const store = TestBed.inject(WorklogStore);
+    const date = '2026-11-02';
+    const todo = { ...newTodo(date), title: 'Review', completed: true };
+    const csv = exportCsv([todo], undefined, [date]);
+    const before = structuredClone(saved);
+    fail = true;
+    expect(store.importCsv(csv)).toBe(false);
+    expect(saved).toEqual(before);
+    fail = false;
+    expect(store.importCsv(csv)).toBe(true);
+    store.load();
+    expect(saved.dayOffDates).toContain(date);
+    expect(saved.items.find((item) => item.id === todo.id)).toMatchObject(todo);
+    expect(store.importCsv(csv)).toBe(true);
+  });
   it('creates, completes, edits, reopens and deletes TODOs without changing worklogs', () => {
     const store = TestBed.inject(WorklogStore);
     const logs = [...saved.items];
@@ -84,7 +117,7 @@ describe('Worklog state operations', () => {
     expect(store.saveTodo(draft, { title: 'Pending edit' })).toBe(false);
     expect(store.document()).toBe(before);
   });
-  it('imports once atomically, retains generation metadata and survives reload', () => {
+  it('replaces all logs atomically and prevents regeneration on reload', () => {
     const store = TestBed.inject(WorklogStore);
     const item = newItem('2026-10-27', 'MEETING');
     const csv = exportCsv([item]);
@@ -92,13 +125,31 @@ describe('Worklog state operations', () => {
     const write = vi.spyOn(repository, 'write');
     expect(store.importCsv(csv)).toBe(true);
     expect(write).toHaveBeenCalledTimes(1);
-    expect(saved.processedDates).toEqual(before.processedDates);
+    expect(saved.processedDates).toEqual(expect.arrayContaining(before.processedDates));
     expect(saved.dayOffDates).toEqual(before.dayOffDates);
     expect(saved.generationStartDate).toEqual(before.generationStartDate);
     store.load();
     expect(store.document()?.items.some((entry) => entry.id === item.id)).toBe(true);
-    expect(store.importCsv(csv)).toBe(false);
-    expect(write).toHaveBeenCalledTimes(1);
+    expect(saved.items).toHaveLength(1);
+    expect(store.importCsv(csv)).toBe(true);
+    expect(saved.items).toHaveLength(1);
+    expect(write).toHaveBeenCalledTimes(2);
+  });
+  it('clears all records with a header-only CSV without backfilling removed dates', () => {
+    const store = TestBed.inject(WorklogStore);
+    expect(store.dayOff('2026-11-02', true)).toBe(true);
+    expect(store.saveTodo(newTodo('2026-10-26'), { title: 'Old TODO' })).toBe(true);
+    vi.setSystemTime(new Date(2026, 9, 28, 12));
+    store.today.set('2026-10-28');
+    expect(store.importCsv(exportCsv([]))).toBe(true);
+    store.load();
+    expect(saved.items).toEqual([]);
+    expect(saved.dayOffDates).toEqual([]);
+    vi.setSystemTime(new Date(2026, 9, 29, 12));
+    store.today.set('2026-10-29');
+    store.load();
+    expect(saved.items).toHaveLength(2);
+    expect(saved.items.every((item) => item.date === '2026-10-29')).toBe(true);
   });
   it('retains saved state on invalid CSV, failed import and stale revision', () => {
     const store = TestBed.inject(WorklogStore);

@@ -8,8 +8,8 @@
       <a
         class="nav-pill"
         routerLink="/workplace/worklog"
-        routerLinkActive="is-active"
-        ariaCurrentWhenActive="page"
+        [class.is-active]="url().startsWith('/workplace/')"
+        [attr.aria-current]="url().startsWith('/workplace/') ? 'page' : null"
       >
         <span class="material-symbols-outlined nav-icon" aria-hidden="true">work</span>
         <span>Workplace</span>
@@ -24,6 +24,9 @@
         <span>Personal</span>
       </a>
     </nav>
-    <span class="workspace-label">MY WORKSPACE</span>
+    <button class="user-button" type="button" aria-label="User account: Joey">
+      <span class="material-symbols-outlined" aria-hidden="true">person</span>
+      <span>Joey</span>
+    </button>
   </div>
 </header>

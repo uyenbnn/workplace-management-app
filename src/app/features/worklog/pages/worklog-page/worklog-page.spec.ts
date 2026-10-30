@@ -1,5 +1,6 @@
 ﻿import { TestBed } from '@angular/core/testing';
 import { Dialog } from '@angular/cdk/dialog';
+import { provideRouter } from '@angular/router';
 import { Subject } from 'rxjs';
 import { WorklogPage } from './worklog-page';
 import { WORKLOG_REPOSITORY } from '../../data-access/worklog-repository';
@@ -33,6 +34,7 @@ describe('Worklog calendar views', () => {
     TestBed.configureTestingModule({
       imports: [WorklogPage],
       providers: [
+        provideRouter([]),
         { provide: WORKLOG_REPOSITORY, useValue: repository },
         { provide: WorklogViewPreference, useValue: preference },
       ],

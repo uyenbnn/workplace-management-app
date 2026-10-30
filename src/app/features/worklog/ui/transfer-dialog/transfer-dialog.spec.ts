@@ -60,7 +60,7 @@ describe('CSV transfer dialog', () => {
     expect(saved).toBe(before);
     expect(dialog.counts().new).toBe(1);
     const element: HTMLElement = fixture.nativeElement;
-    expect(element.textContent).toContain('Import 1 entries');
+    expect(element.textContent).toContain('Replace all data with 1 CSV records');
     fail = true;
     dialog.import();
     expect(dialog.text()).toBe(csv);
@@ -68,8 +68,54 @@ describe('CSV transfer dialog', () => {
     fail = false;
     dialog.import();
     expect(dialog.text()).toBeNull();
-    expect(dialog.notice()).toBe('1 entries imported.');
-    expect(saved.items).toHaveLength(before.items.length + 1);
+    expect(dialog.notice()).toBe('Worklog replaced with 1 CSV records.');
+    expect(saved.items).toHaveLength(1);
+  });
+  it('counts and imports a day-off-only CSV through the dialog', () => {
+    const fixture = TestBed.createComponent(TransferDialog);
+    const dialog = fixture.componentInstance;
+    dialog.text.set(exportCsv([], undefined, ['2026-11-02']));
+    fixture.detectChanges();
+    const element: HTMLElement = fixture.nativeElement;
+    expect(
+      element.querySelector<HTMLButtonElement>('button.primary:not(.icon-button)')?.disabled,
+    ).toBe(false);
+    expect(element.textContent).toContain('Replace all data with 1 CSV records');
+    dialog.import();
+    expect(saved.dayOffDates).toContain('2026-11-02');
+    expect(dialog.notice()).toBe('Worklog replaced with 1 CSV records.');
+  });
+  it('allows a header-only CSV to explicitly clear saved data', () => {
+    const fixture = TestBed.createComponent(TransferDialog);
+    const dialog = fixture.componentInstance;
+    dialog.text.set(exportCsv([]));
+    fixture.detectChanges();
+    const element: HTMLElement = fixture.nativeElement;
+    expect(
+      element.querySelector<HTMLButtonElement>('button.primary:not(.icon-button)')?.disabled,
+    ).toBe(false);
+    expect(element.textContent).toContain('Replace all data with 0 CSV records');
+    dialog.import();
+    expect(saved.items).toEqual([]);
+  });
+  it('imports every CSV row even when all IDs already exist', () => {
+    const fixture = TestBed.createComponent(TransferDialog);
+    const dialog = fixture.componentInstance;
+    const items = [newItem('2026-10-26', 'MEETING'), newItem('2026-10-27', 'MEETING')];
+    saved = { ...saved, items };
+    dialog.store.document.set(saved);
+    dialog.text.set(exportCsv(items));
+    fixture.detectChanges();
+    const element: HTMLElement = fixture.nativeElement;
+    expect(dialog.preview()?.result?.count).toBe(2);
+    expect(element.textContent).not.toContain('identical');
+    expect(element.textContent).not.toContain('conflicting');
+    expect(
+      element.querySelector<HTMLButtonElement>('button.primary:not(.icon-button)')?.disabled,
+    ).toBe(false);
+    dialog.import();
+    expect(saved.items.map((item) => item.id)).toEqual(items.map((item) => item.id));
+    expect(saved.items).toHaveLength(2);
   });
   it('blocks invalid imports and requests discard confirmation on Escape', async () => {
     const fixture = TestBed.createComponent(TransferDialog);
@@ -77,7 +123,9 @@ describe('CSV transfer dialog', () => {
     dialog.text.set(exportCsv([newItem('2026-02-30', 'MEETING')]));
     fixture.detectChanges();
     const element: HTMLElement = fixture.nativeElement;
-    expect(element.querySelector<HTMLButtonElement>('button.primary')?.disabled).toBe(true);
+    expect(
+      element.querySelector<HTMLButtonElement>('button.primary:not(.icon-button)')?.disabled,
+    ).toBe(true);
     ref.keydownEvents.next(new KeyboardEvent('keydown', { key: 'Escape' }));
     await Promise.resolve();
     await Promise.resolve();

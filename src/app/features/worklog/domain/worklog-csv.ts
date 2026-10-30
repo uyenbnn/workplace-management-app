@@ -1,6 +1,6 @@
-﻿import { LoggedWorkItem, isLoggedItem, WorkItem, WorklogDocument, validDate } from './worklog';
+﻿import { WorkItem, validDate } from './worklog';
 
-export const CSV_COLUMNS = [
+const LEGACY_COLUMNS = [
   'id',
   'date',
   'type',
@@ -11,17 +11,21 @@ export const CSV_COLUMNS = [
   'storyPoints',
   'status',
 ] as const;
+export const CSV_COLUMNS = [...LEGACY_COLUMNS, 'title', 'completed'] as const;
 export interface ImportRow {
   row: number;
   id: string;
-  status: 'new' | 'identical' | 'conflicting' | 'invalid';
+  status: 'new' | 'invalid';
   message: string;
   item?: WorkItem;
+  dayOffDate?: string;
 }
 export interface ImportPreview {
   rows: ImportRow[];
   additions: WorkItem[];
   invalid: boolean;
+  dayOffAdditions: string[];
+  count: number;
 }
 // Prefix potentially executable cells and literal apostrophes; decoding removes exactly one prefix.
 function protect(value: string): string {
@@ -30,7 +34,21 @@ function protect(value: string): string {
 function unprotect(value: string): string {
   return value.startsWith("'") ? value.slice(1) : value;
 }
-function values(item: LoggedWorkItem): string[] {
+function values(item: WorkItem): string[] {
+  if (item.type === 'TODO')
+    return [
+      item.id,
+      item.date,
+      item.type,
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      item.title,
+      String(item.completed),
+    ];
   return [
     item.id,
     item.date,
@@ -41,14 +59,25 @@ function values(item: LoggedWorkItem): string[] {
     item.type === 'WORK_ON_TASK' ? item.name : '',
     item.type === 'WORK_ON_TASK' && item.storyPoints !== null ? String(item.storyPoints) : '',
     item.type === 'WORK_ON_TASK' ? item.status : '',
+    '',
+    '',
   ];
 }
-export function exportCsv(items: readonly WorkItem[], month?: string): string {
+export function exportCsv(
+  items: readonly WorkItem[],
+  month?: string,
+  dayOffDates: readonly string[] = [],
+): string {
   const rows = [...items]
-    .filter(isLoggedItem)
     .filter((item) => !month || item.date.startsWith(month))
     .sort((a, b) => a.date.localeCompare(b.date) || a.id.localeCompare(b.id))
     .map(values);
+  rows.push(
+    ...dayOffDates
+      .filter((date) => !month || date.startsWith(month))
+      .map((date) => ['', date, 'DAY_OFF', '', '', '', '', '', '', '', '']),
+  );
+  rows.sort((a, b) => a[1].localeCompare(b[1]) || a[0].localeCompare(b[0]));
   return (
     '\uFEFF' +
     [CSV_COLUMNS, ...rows]
@@ -100,13 +129,10 @@ export function parseCsv(text: string): string[][] {
   }
   return rows;
 }
-export function previewCsv(
-  text: string,
-  document: WorklogDocument,
-  now = new Date().toISOString(),
-): ImportPreview {
+export function previewCsv(text: string, now = new Date().toISOString()): ImportPreview {
   const [header, ...data] = parseCsv(text);
-  if (!header || header.join(',') !== CSV_COLUMNS.join(','))
+  const legacy = header?.join(',') === LEGACY_COLUMNS.join(',');
+  if (!header || (!legacy && header.join(',') !== CSV_COLUMNS.join(',')))
     throw new Error(
       'Unsupported CSV headers. Use a worklog CSV export. timeSpent is stored in minutes.',
     );
@@ -115,25 +141,67 @@ export function previewCsv(
     const id = unprotect(row[0] ?? '');
     ids.set(id, (ids.get(id) ?? 0) + 1);
   });
-  const existing = new Map(document.items.map((item) => [item.id, item]));
+  const dayCounts = new Map<string, number>();
+  data.forEach((raw) => {
+    if (unprotect(raw[2] ?? '') === 'DAY_OFF') {
+      const date = unprotect(raw[1] ?? '');
+      dayCounts.set(date, (dayCounts.get(date) ?? 0) + 1);
+    }
+  });
+
   const rows: ImportRow[] = data.map((raw, index) => {
     const cells = raw.map(unprotect);
     const [id, date, type, duration, logged, storyId, name, points, status] = cells;
+    const title = cells[9] ?? '';
+    const completed = cells[10] ?? '';
     const invalid = (message: string): ImportRow => ({
       row: index + 2,
       id: id ?? '',
       status: 'invalid',
       message,
     });
-    if (cells.length !== CSV_COLUMNS.length) return invalid('Wrong column count.');
+    if (cells.length !== (legacy ? LEGACY_COLUMNS.length : CSV_COLUMNS.length))
+      return invalid('Wrong column count.');
+    if (!validDate(date)) return invalid('Invalid local date; use YYYY-MM-DD.');
+    if (type === 'DAY_OFF') {
+      if (id || cells.slice(3).some(Boolean))
+        return invalid('Day-off rows require only date and type DAY_OFF.');
+      if ((dayCounts.get(date) ?? 0) > 1) return invalid('Duplicate day-off date in this file.');
+      return {
+        row: index + 2,
+        id: date,
+        status: 'new',
+        message: 'Ready to import day off.',
+        dayOffDate: date,
+      };
+    }
     if (!id.trim() || id !== id.trim() || /[\x00-\x1f]/.test(id))
       return invalid(
         'A nonempty stable ID without surrounding whitespace or control characters is required.',
       );
     if ((ids.get(id) ?? 0) > 1) return invalid('Duplicate ID in this file.');
     if (!validDate(date)) return invalid('Invalid local date; use YYYY-MM-DD.');
-    if (document.dayOffDates.includes(date))
-      return invalid('Date is marked off. Remove this row or change the day-off setting first.');
+    if (type !== 'TODO' && dayCounts.has(date))
+      return invalid('CSV contains both worklogs and a day-off flag for this date.');
+    if (type === 'TODO') {
+      if (cells.slice(3, 9).some(Boolean)) return invalid('TODO worklog fields must be empty.');
+      if (!title.trim()) return invalid('Enter a TODO title.');
+      if (completed !== 'true' && completed !== 'false')
+        return invalid('completed must be true or false.');
+      const item: WorkItem = {
+        id,
+        date,
+        type,
+        title,
+        completed: completed === 'true',
+        source: 'MANUAL',
+        defaultSlot: null,
+        createdAt: now,
+        updatedAt: now,
+      };
+      return { row: index + 2, id, status: 'new', message: 'Ready to import TODO.', item };
+    }
+    if (title || completed) return invalid('Worklog TODO fields must be empty.');
     if (type !== 'MEETING' && type !== 'WORK_ON_TASK') return invalid('Invalid item type.');
     const numeric = (value: string) =>
       /^(?:\d+(?:\.\d*)?|\.\d+)(?:[eE][+-]?\d+)?$/.test(value) && Number.isFinite(Number(value));
@@ -170,24 +238,12 @@ export function previewCsv(
         status,
       };
     }
-    const previous = existing.get(id);
-    if (previous) {
-      const identical =
-        previous.type !== 'TODO' &&
-        JSON.stringify(values(previous)) === JSON.stringify(values(item));
-      return {
-        row: index + 2,
-        id,
-        status: identical ? 'identical' : 'conflicting',
-        message: identical
-          ? 'Already saved; skipped.'
-          : 'Saved entry differs; keeping existing entry.',
-      };
-    }
     return { row: index + 2, id, status: 'new', message: 'Ready to import.', item };
   });
   return {
     rows,
+    dayOffAdditions: rows.flatMap((row) => (row.dayOffDate ? [row.dayOffDate] : [])),
+    count: rows.filter((row) => row.status === 'new').length,
     additions: rows.flatMap((row) => (row.item ? [row.item] : [])),
     invalid: rows.some((row) => row.status === 'invalid'),
   };

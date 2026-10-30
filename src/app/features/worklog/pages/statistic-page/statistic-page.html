@@ -1,0 +1,47 @@
+<main>
+  <header class="page-heading">
+    <div>
+      <p class="eyebrow">WORKPLACE / YOUR TIME BY STORY</p>
+      <h1>Story statistics<span class="heading-dot">.</span></h1>
+      <p class="subtitle">See where your task hours go. Totals reflect the column filters below.</p>
+    </div>
+  </header>
+  @if (reader.error()) {
+    <div class="error" role="alert">
+      <p>{{ reader.error() }}</p>
+      <button type="button" (click)="reader.load()">Retry loading</button>
+    </div>
+  } @else {
+    @if (!hasTasks()) {
+      <section class="empty">
+        <h2>No task worklogs yet</h2>
+        <p>Record task time in Worklog tracker to see your story totals here.</p>
+      </section>
+    }
+    <!-- <div class="summary" role="status" aria-live="polite">
+    <p>
+      <strong class="numbers">{{ summary().hours | number: '1.0-2' }}
+        h</strong><span>Matching task hours</span>
+    </p>
+    <p>
+      <strong class="numbers">{{ groups().length }}</strong><span>Story
+        groups</span>
+    </p>
+    <p>
+      <strong class="numbers">{{ summary().entries }}</strong><span>Task
+        entries</span>
+    </p>
+  </div> -->
+    <app-story-statistics-table
+      [rows]="groups()"
+      [sort]="sort()"
+      [filters]="columnFilters()"
+      [drafts]="columnDrafts()"
+      [errors]="columnErrors()"
+      [expanded]="expanded()"
+      (sortChange)="sortBy($event)"
+      (filtersChange)="updateColumns($event)"
+      (expansionChange)="toggle($event)"
+    />
+  }
+</main>

@@ -29,6 +29,14 @@ The most consequential questions are listed first. Proposed defaults allow the d
 8. **Navigation:** should Personal appear disabled with a future label, or be hidden until implemented? Proposed: visible with a clear future label.
 9. **Data safety:** is local-only persistence sufficient without export/import in the first release? Proposed: export/import deferred.
 
+## Story statistics — approved 2026-10-30
+
+The user approved implementation of `/workplace/statistic`, task-hour totals grouped by
+normalized story ID, search, date/status/timeLog filters, and expandable matching details.
+See [Story statistics](08-story-statistics.md) for the approved behavior and boundaries.
+Existing internal minute storage remains unchanged; statistics displays converted hours.
+This supersedes the deferral of reporting and other Workplace subtabs for this view only.
+
 ## 18. Implementation readiness
 
 Next step: resolve the remaining task-copy and day-off edge cases and required task fields, then turn the accepted criteria into the first implementation backlog. The confirmed backfill, task-copy, external-logging flag, and day-off requirements are included in this revision. This document specifies the intended app and does not implement or deploy it.
@@ -141,3 +149,31 @@ the day dialog's TODO tab. Preserve reminder order and existing editing/persiste
 
 Personal is now an enabled navigation link to a skeleton page only, superseding the
 disabled future tab decision. Personal task functionality remains deferred.
+
+## CSV TODO and day-off transfer - approved 2026-10-30
+
+CSV now transfers meetings, tasks, title-only TODOs (including completion), and days off.
+This supersedes the earlier CSV exclusions. New exports append title,completed to the original
+nine columns; imports also accept legacy nine-column worklog exports. TODO rows have empty
+worklog fields. DAY_OFF rows have only date and type populated (no ID); dates are their identity.
+Month scope applies to all records. Existing IDs and day-off flags win; TODOs are allowed on days off.
+Day-off flags are additive and never delete worklogs: a flag conflicting with saved or incoming
+worklogs is previewed as conflicting and skipped. Worklogs on an already saved day off remain
+invalid; remove that flag explicitly first. Duplicate day-off dates and invalid TODO fields block
+the whole import. All additions commit atomically with revision protection and failed-save retention.
+Preferences and generation history remain local. Story statuses are not synchronized by import.
+
+## Full CSV replacement - approved 2026-10-30
+
+Import replaces the entire saved item collection (meetings, tasks, and TODOs) and day-off
+collection with the validated CSV, across all months. This supersedes all merge, skip,
+existing-entry-wins, and additive-day-off policies above. Saved IDs and day-off dates do not
+restrict incoming records. Duplicate IDs/dates, invalid fields, and a CSV containing both a
+worklog and DAY_OFF for the same date block replacement. TODOs may coexist with DAY_OFF.
+A valid header-only CSV clears all items and day-off flags. Legacy exports clear TODOs and
+days off because those records are absent. The preview and replacement button explicitly
+warn that absent records are removed, including for single-month exports.
+Replace in one revision-checked repository write; validation or storage failures preserve
+all saved data and the pending preview. Preserve generation start, seal all dates through
+import day and imported worklog dates as processed so removed defaults do not reappear.
+Normal generation continues on subsequent dates. Preferences remain unchanged.

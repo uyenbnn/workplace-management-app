@@ -104,4 +104,23 @@ Keep the header transparent with top padding and a primary pink horizontal line 
 
 Header and worklog content share the same maximum width and responsive horizontal gutter.
 Align the brand, header divider, page heading, and calendar to the same left edge; align the
-workspace label, divider end, and page actions/calendar to the same right edge.
+user button, divider end, and page actions/calendar to the same right edge.
+
+## Header user button - approved 2026-10-29
+
+Replace MY WORKSPACE with an enabled, keyboard-focusable native button named User account: Joey.
+Show a decorative Material Symbols Outlined person icon (24px) in the primary color beside
+the mock name Joey. Use a transparent background with no surrounding circle, a minimum 44px
+touch height, semantic colors, and visible keyboard focus. Align it right on desktop
+and keep it visible beside the brand and navigation on narrow screens, including 320px.
+This is a visual placeholder only: no click handler, navigation, menu, authentication, or
+storage behavior is attached.
+
+## Soft form-field focus - approved 2026-10-30
+
+Text inputs, textareas, and selects use a thin primary focus border with a soft translucent
+primary halo and glow instead of the thick offset outline. Apply the treatment globally,
+including column-filter popovers and worklog forms, for pointer and keyboard focus. Derive
+focus colors and shadow from central CSS variables. Keep distinct keyboard focus for buttons,
+links, checkboxes, and radios. Forced-colors mode uses a visible system-color outline because
+box shadows may be suppressed. Focus must not change field dimensions.

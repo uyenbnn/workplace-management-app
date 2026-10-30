@@ -33,15 +33,15 @@ describe('Daily TODO domain and compatibility', () => {
     const document = { ...emptyDocument('2026-10-26'), items: [{ ...todo(), ...fields }] };
     expect(() => decodeDocument(JSON.stringify(document))).toThrow(/preserved/);
   });
-  it('never copies or rolls reminders forward and keeps them out of CSV worklogs', () => {
+  it('never copies or rolls reminders forward and transfers them through CSV', () => {
     const item = todo();
     const document = reconcile({ ...emptyDocument('2026-10-26'), items: [item] }, '2026-10-28');
     expect(document.items.filter((entry) => entry.type === 'TODO')).toEqual([item]);
     const tasks = document.items.filter((entry) => entry.type === 'WORK_ON_TASK');
     expect(tasks).toHaveLength(3);
     expect(tasks.every((task) => task.name === '')).toBe(true);
-    const preview = previewCsv(exportCsv(document.items), emptyDocument('2026-10-26'));
-    expect(preview.additions).toHaveLength(6);
+    const preview = previewCsv(exportCsv(document.items));
+    expect(preview.additions).toHaveLength(7);
     expect(preview.invalid).toBe(false);
   });
   it('summarizes empty, unchecked, mixed, and completed reminders', () => {
