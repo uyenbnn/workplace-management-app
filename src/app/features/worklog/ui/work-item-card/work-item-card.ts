@@ -15,6 +15,10 @@ export class WorkItemCard {
     return storyId ? `${storyId} · ${itemTitle(item)}` : itemTitle(item);
   });
   readonly hours = computed(() => formatHours(this.item().timeSpent));
+  readonly taskStatus = computed(() => {
+    const item = this.item();
+    return item.type === 'WORK_ON_TASK' ? item.status : null;
+  });
   readonly status = computed(() => {
     const item = this.item();
     return item.type === 'WORK_ON_TASK'

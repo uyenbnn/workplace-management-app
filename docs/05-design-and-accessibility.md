@@ -35,6 +35,20 @@ Desktop typography, spacing, radii, elevation, and layout values not specified b
 
 ## 13. Accessibility and states
 
+### Calendar item-card colors - approved 2026-11-03
+
+Logged tasks and meetings use the pastel success background. Unlogged tasks use the light
+brand background (`color/surface/active`); unlogged meetings keep their subtle neutral surface.
+The logged background takes priority over the task background. Task statuses use pill badges
+with bold text and a visible tone-matched border: DONE uses the supplied success-100 fill and
+success foreground/border, IN_PROGRESS uses warning-100 and warning foreground/border,
+and TODO uses the light neutral surface-hover background with primary text and control border.
+Central semantic aliases expose the stronger fills so badges remain distinct on pastel cards.
+Space separates duration from the task badge without an intervening dot. Badge tones are independent of logging;
+duration retains its secondary text color. Metadata wraps on narrow cards.
+Keep textual logged/status indicators, the meeting accent, hover border feedback, and keyboard
+focus visible. These rules apply only to calendar work-item cards and do not change saved data.
+
 Successful item saves and confirmed deletions show a success toast above the editor for four seconds.
 Repeated actions replace the previous toast and restart its timeout. Toasts do not move focus or block
 controls; CDK announces them politely to screen readers, including inside dialogs. Failed actions keep

@@ -6,6 +6,9 @@
   --layout-content-gutter: clamp(1rem, 5vw, 8rem);
   --radius-control: 8px;
   --radius-pill: 999px;
+  // Status badge fills use stronger supplied tints to separate them from pastel cards.
+  --color-status-done-background: var(--color-success-100);
+  --color-status-in-progress-background: var(--color-warning-100);
   --space-header-gap: 1rem;
   --space-header-track-inset: 4px;
   --space-header-top: 1.5rem;
