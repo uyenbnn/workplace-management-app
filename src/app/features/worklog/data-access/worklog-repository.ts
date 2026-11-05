@@ -1,9 +1,15 @@
-﻿import { Injectable, InjectionToken } from '@angular/core';
+import { Injectable, InjectionToken, Signal, WritableSignal, inject } from '@angular/core';
 import { decodeDocument, WorklogDocument } from '../domain/worklog';
+import { SupabaseWorklogRepository } from './supabase-worklog-repository';
 export const STORAGE_KEY = 'worktask.worklog.v1';
 export interface WorklogRepository {
-  read(): WorklogDocument | null;
-  write(document: WorklogDocument, expectedRevision: number | null): WorklogDocument;
+  readonly identity?: Signal<string | null>;
+  readonly editing?: WritableSignal<boolean>;
+  read(): Promise<WorklogDocument | null> | WorklogDocument | null;
+  write(
+    document: WorklogDocument,
+    expectedRevision: number | null,
+  ): Promise<WorklogDocument> | WorklogDocument;
 }
 @Injectable({ providedIn: 'root' })
 export class LocalStorageWorklogRepository implements WorklogRepository {
@@ -40,5 +46,5 @@ export class LocalStorageWorklogRepository implements WorklogRepository {
 }
 export const WORKLOG_REPOSITORY = new InjectionToken<WorklogRepository>('WorklogRepository', {
   providedIn: 'root',
-  factory: () => new LocalStorageWorklogRepository(),
+  factory: () => inject(SupabaseWorklogRepository),
 });

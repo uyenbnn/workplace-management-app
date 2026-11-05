@@ -71,3 +71,11 @@ text, close/discard handling, deletion cancellation/failure, and checkbox rollba
 Verify that title-only TODOs create, edit, complete, reopen, delete, autosave and reload. Legacy
 notes must be omitted from loaded and newly persisted records while preserving all remaining
 TODO fields and existing worklogs. Failed writes must leave original stored data untouched.
+
+## Supabase verification - approved 2026-11-04
+
+Add ownership isolation, anonymous denial, revision concurrency, failed/delayed saves,
+account switching, auth validation, session expiry, full-document local import and readback
+recovery checks. Existing editing, generation, TODO, CSV replacement and statistics rules
+remain regression requirements. See the Supabase operations guide for actual results and
+pending live-environment checks.

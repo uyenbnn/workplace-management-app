@@ -13,7 +13,7 @@ function task(id: string, name: string, minutes: number): Task {
   if (item.type !== 'WORK_ON_TASK') throw new Error('Expected task');
   return { ...item, id, name, storyId: ' story-1 ', timeSpent: minutes };
 }
-describe('Statistics page', () => {
+describe('Statistics page', async () => {
   let saved: WorklogDocument | null;
   let fail: boolean;
   const write = vi.fn();
@@ -45,6 +45,7 @@ describe('Statistics page', () => {
   it('renders matching summaries, expands details with native button semantics and clears column filters', async () => {
     const fixture = TestBed.createComponent(StatisticPage);
     await fixture.whenStable();
+    await fixture.whenStable();
     const page = fixture.componentInstance;
     const element: HTMLElement = fixture.nativeElement;
     expect(page.summary()).toEqual({ hours: 2, entries: 2 });
@@ -75,6 +76,7 @@ describe('Statistics page', () => {
     };
     const fixture = TestBed.createComponent(StatisticPage);
     await fixture.whenStable();
+    await fixture.whenStable();
     const page = fixture.componentInstance;
     const element: HTMLElement = fixture.nativeElement;
     expect(element.querySelector('form')).toBeNull();
@@ -86,12 +88,14 @@ describe('Statistics page', () => {
     expect(page.groups()).toEqual([]);
     fixture.destroy();
     const reload = TestBed.createComponent(StatisticPage);
+    await reload.whenStable();
     expect(reload.componentInstance.summary()).toEqual({ hours: 3, entries: 2 });
     expect(reload.componentInstance.sort()).toBe('hours-desc');
     expect(write).not.toHaveBeenCalled();
   });
   it('retains last valid numeric filters on invalid edits, updates visible summaries and clears per column', async () => {
     const fixture = TestBed.createComponent(StatisticPage);
+    await fixture.whenStable();
     const page = fixture.componentInstance;
     page.toggle('STORY-1');
     page.updateColumns({ ...page.columnDrafts(), hours: { min: '2', max: '2' } });
@@ -115,11 +119,13 @@ describe('Statistics page', () => {
   });
   it('refreshes after repository changes and distinguishes empty, no matches, and failed reads', async () => {
     const fixture = TestBed.createComponent(StatisticPage);
+    await fixture.whenStable();
     const page = fixture.componentInstance;
     const element: HTMLElement = fixture.nativeElement;
     await fixture.whenStable();
     saved = { ...emptyDocument(localDate()), items: [task('new', 'New task', 240)] };
-    window.dispatchEvent(new StorageEvent('storage', { key: STORAGE_KEY }));
+    window.dispatchEvent(new Event('focus'));
+    await fixture.whenStable();
     await fixture.whenStable();
     expect(page.summary()).toEqual({ hours: 4, entries: 1 });
     page.updateColumns({ ...page.columnDrafts(), story: 'not found' });
@@ -127,6 +133,7 @@ describe('Statistics page', () => {
     expect(element.textContent).toContain('No matching tasks');
     fail = true;
     window.dispatchEvent(new Event('focus'));
+    await fixture.whenStable();
     await fixture.whenStable();
     expect(element.querySelector('.error[role="alert"]')?.textContent).toContain(
       'Cannot read storage',
@@ -146,11 +153,13 @@ describe('Statistics page', () => {
     try {
       const fixture = TestBed.createComponent(StatisticPage);
       await fixture.whenStable();
+      await fixture.whenStable();
       expect(fixture.componentInstance.reader.error()).toContain('Cannot read worklog');
       expect(localStorage.getItem(STORAGE_KEY)).toBe('{broken');
       localStorage.removeItem(STORAGE_KEY);
       fixture.componentInstance.reader.load();
       window.dispatchEvent(new Event('focus'));
+      await fixture.whenStable();
       window.dispatchEvent(new StorageEvent('storage', { key: null }));
       expect(localStorage.getItem(STORAGE_KEY)).toBeNull();
       expect(setItem).not.toHaveBeenCalled();
@@ -159,13 +168,16 @@ describe('Statistics page', () => {
       localStorage.removeItem(STORAGE_KEY);
     }
   });
-  it('removes refresh listeners when the page is destroyed', () => {
+  it('removes refresh listeners when the page is destroyed', async () => {
     const fixture = TestBed.createComponent(StatisticPage);
+    await fixture.whenStable();
     const reader = fixture.componentInstance.reader;
     const load = vi.spyOn(reader, 'load');
     fixture.destroy();
     window.dispatchEvent(new Event('focus'));
-    window.dispatchEvent(new StorageEvent('storage', { key: STORAGE_KEY }));
+    await fixture.whenStable();
+    window.dispatchEvent(new Event('focus'));
+    await fixture.whenStable();
     expect(load).not.toHaveBeenCalled();
   });
 });

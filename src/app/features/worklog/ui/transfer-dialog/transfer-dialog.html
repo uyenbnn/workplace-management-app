@@ -1,105 +1,116 @@
-﻿<header>
-  <h2 id="transfer-title">Import / Export</h2>
-  <button type="button" aria-label="Close import and export" (click)="close()">
-    <span class="material-symbols-outlined" aria-hidden="true">close</span>
-  </button>
-</header>
-<div class="content">
-  <p>
-    Transfer meetings, tasks, TODO lists, and days off as CSV. Preferences and
-    generation history
-    stay on this device.
+@if (accountChanged()) {
+  <p role="alert">
+    Your account changed. This editor cannot save to the new account. Close it and sign in to the
+    original account before retrying.
   </p>
-  <section aria-labelledby="export-title">
-    <h3 id="export-title">Export CSV</h3>
-    <label for="export-scope">Entries to export</label>
-    <select
-      id="export-scope"
-      #exportScope
-      [value]="scope()"
-      (change)="scope.set(exportScope.value)">
-      <option value="month">Current month ({{ data.month }})</option>
-      <option value="all">All worklogs</option>
-    </select>
-    <button type="button" (click)="download()">
-      <span class="material-symbols-outlined" aria-hidden="true">download</span>
-      Export CSV
+}
+@if (store.pending()) {
+  <p role="status">Saving to your account...</p>
+}
+<fieldset class="save-boundary" [disabled]="store.pending()" [attr.aria-busy]="store.pending()">
+  <header>
+    <h2 id="transfer-title">Import / Export</h2>
+    <button type="button" aria-label="Close import and export" (click)="close()">
+      <span class="material-symbols-outlined" aria-hidden="true">close</span>
     </button>
-  </section>
-  <section aria-labelledby="import-title">
-    <h3 id="import-title">Import CSV</h3>
-    <label for="import-scope">Select a file to import</label>
-    <input
-      #csvFile
-      id="csv-file"
-      type="file"
-      hidden
-      accept=".csv,text/csv"
-      (change)="selectFile($event)" />
-    <button
-      type="button"
-      class="primary icon-button"
-      aria-label="Choose CSV file"
-      title="Choose CSV file"
-      [disabled]="reading()"
-      (click)="csvFile.click()">
-      <span class="material-symbols-outlined"
-        aria-hidden="true">upload_file</span>
-    </button>
-    @if (reading()) {
-    <p role="status">Reading CSV...</p>
-    }
-    @if (preview(); as preview) {
-    @if (preview.error) {
-    <p class="error" role="alert">{{ preview.error }}</p>
-    }
-    @if (preview.result; as result) {
-    <p role="status">{{ counts().new }} ready / {{ counts().invalid }}
-      invalid</p>
-    @if (result.invalid) {
-    <p class="error" role="alert">
-      Correct all invalid rows in your CSV and select the file again. Nothing
-      has been
-      imported.
+  </header>
+  <div class="content">
+    <p>
+      Transfer meetings, tasks, TODO lists, and days off as CSV. Generation history stays in your
+      account and is not included in CSV. View preferences stay on this device.
     </p>
-    }
-    <div class="rows" tabindex="0" role="region" aria-label="CSV row details">
-      <table>
-        <thead>
-          <tr>
-            <th>Row</th>
-            <th>ID</th>
-            <th>Result</th>
-            <th>Details</th>
-          </tr>
-        </thead>
-        <tbody>
-          @for (row of result.rows; track row.row) {
-          <tr>
-            <td>{{ row.row }}</td>
-            <td>{{ row.id }}</td>
-            <td>{{ row.status }}</td>
-            <td>{{ row.message }}</td>
-          </tr>
+    <section aria-labelledby="export-title">
+      <h3 id="export-title">Export CSV</h3>
+      <label for="export-scope">Entries to export</label>
+      <select
+        id="export-scope"
+        #exportScope
+        [value]="scope()"
+        (change)="scope.set(exportScope.value)"
+      >
+        <option value="month">Current month ({{ data.month }})</option>
+        <option value="all">All worklogs</option>
+      </select>
+      <button type="button" (click)="download()">
+        <span class="material-symbols-outlined" aria-hidden="true">download</span>
+        Export CSV
+      </button>
+    </section>
+    <section aria-labelledby="import-title">
+      <h3 id="import-title">Import CSV</h3>
+      <label for="import-scope">Select a file to import</label>
+      <input
+        #csvFile
+        id="csv-file"
+        type="file"
+        hidden
+        accept=".csv,text/csv"
+        (change)="selectFile($event)"
+      />
+      <button
+        type="button"
+        class="primary icon-button"
+        aria-label="Choose CSV file"
+        title="Choose CSV file"
+        [disabled]="reading()"
+        (click)="csvFile.click()"
+      >
+        <span class="material-symbols-outlined" aria-hidden="true">upload_file</span>
+      </button>
+      @if (reading()) {
+        <p role="status">Reading CSV...</p>
+      }
+      @if (preview(); as preview) {
+        @if (preview.error) {
+          <p class="error" role="alert">{{ preview.error }}</p>
+        }
+        @if (preview.result; as result) {
+          <p role="status">{{ counts().new }} ready / {{ counts().invalid }} invalid</p>
+          @if (result.invalid) {
+            <p class="error" role="alert">
+              Correct all invalid rows in your CSV and select the file again. Nothing has been
+              imported.
+            </p>
           }
-        </tbody>
-      </table>
-    </div>
-    <button
-      type="button"
-      class="primary"
-      [disabled]="result.invalid || reading()"
-      (click)="import()">
-      Replace all data with {{ result.count }} CSV records
-    </button>
+          <div class="rows" tabindex="0" role="region" aria-label="CSV row details">
+            <table>
+              <thead>
+                <tr>
+                  <th>Row</th>
+                  <th>ID</th>
+                  <th>Result</th>
+                  <th>Details</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (row of result.rows; track row.row) {
+                  <tr>
+                    <td>{{ row.row }}</td>
+                    <td>{{ row.id }}</td>
+                    <td>{{ row.status }}</td>
+                    <td>{{ row.message }}</td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+          <button
+            type="button"
+            class="primary"
+            [disabled]="result.invalid || reading()"
+            (click)="import()"
+          >
+            Replace all data with {{ result.count }} CSV records
+          </button>
+        }
+      }
+    </section>
+    @if (error()) {
+      <p class="error" role="alert">{{ error() }}</p>
     }
+    @if (notice()) {
+      <p role="status">{{ notice() }}</p>
     }
-  </section>
-  @if (error()) {
-  <p class="error" role="alert">{{ error() }}</p>
-  }
-  @if (notice()) {
-  <p role="status">{{ notice() }}</p>
-  }
-</div>
-<footer><button type="button" (click)="close()">Close</button></footer>
+  </div>
+  <footer><button type="button" (click)="close()">Close</button></footer>
+</fieldset>

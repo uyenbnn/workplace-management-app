@@ -1,4 +1,5 @@
-﻿import { TransferDialog } from '../../ui/transfer-dialog/transfer-dialog';
+import { LocalMigration } from '../../ui/local-migration/local-migration';
+import { TransferDialog } from '../../ui/transfer-dialog/transfer-dialog';
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { Dialog, DialogModule } from '@angular/cdk/dialog';
 import { DestroyRef } from '@angular/core';
@@ -20,7 +21,7 @@ import { MonthNavigation } from '../../ui/month-navigation/month-navigation';
 import { DayDialog, DayDialogTab } from '../../ui/day-dialog/day-dialog';
 @Component({
   selector: 'app-worklog-page',
-  imports: [DayCell, MonthNavigation, DialogModule],
+  imports: [DayCell, MonthNavigation, DialogModule, LocalMigration],
   templateUrl: './worklog-page.html',
   styleUrl: './worklog-page.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -103,7 +104,13 @@ export class WorklogPage {
     }
   }
   openTransfer(): void {
-    if (this.store.editing() || !this.store.document()) return;
+    if (
+      this.store.editing() ||
+      this.store.pending() ||
+      this.store.loading() ||
+      !this.store.document()
+    )
+      return;
     this.store.editing.set(true);
     this.dialogs
       .open(TransferDialog, {
@@ -120,7 +127,13 @@ export class WorklogPage {
       });
   }
   open(date: string, itemId?: string, tab: DayDialogTab = 'worklog'): void {
-    if (this.store.editing() || !this.store.document()) return;
+    if (
+      this.store.editing() ||
+      this.store.pending() ||
+      this.store.loading() ||
+      !this.store.document()
+    )
+      return;
     this.anchor.set(date);
     this.selected.set(date);
     this.store.editing.set(true);

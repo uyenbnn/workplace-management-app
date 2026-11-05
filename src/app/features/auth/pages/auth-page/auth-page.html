@@ -1,0 +1,169 @@
+<main class="auth-layout">
+  <section class="introduction" aria-labelledby="auth-introduction">
+    <p class="eyebrow">WORKPLACE / A LITTLE EVERYDAY CLARITY</p>
+    <h1 id="auth-introduction">
+      Your workday,<br />in one place<span class="heading-dot">.</span>
+    </h1>
+    <p class="intro-copy">
+      A little structure for every workday. Keep track of your work, make room for your to-dos, and
+      see the bigger picture.
+    </p>
+    <ul class="benefits">
+      <li>
+        <span class="material-symbols-outlined" aria-hidden="true">calendar_month</span>
+        <div>
+          <strong>Your days, organized</strong><span>Worklogs and daily to-dos, side by side.</span>
+        </div>
+      </li>
+      <li>
+        <span class="material-symbols-outlined" aria-hidden="true">bar_chart</span>
+        <div>
+          <strong>A clearer view of your work</strong
+          ><span>See where your time goes, story by story.</span>
+        </div>
+      </li>
+      <li>
+        <span class="material-symbols-outlined" aria-hidden="true">lock</span>
+        <div>
+          <strong>A workspace of your own</strong><span>Your records, ready when you sign in.</span>
+        </div>
+      </li>
+    </ul>
+  </section>
+  <section class="auth-card" aria-labelledby="auth-title" [attr.aria-busy]="pending()">
+    @if (!auth.recovery() && mode() !== 'reset') {
+      <div
+        class="account-switch"
+        [class.signup-active]="mode() === 'signup'"
+        role="group"
+        aria-label="Account action"
+      >
+        <button
+          type="button"
+          [attr.aria-pressed]="mode() === 'signin'"
+          [disabled]="pending()"
+          (click)="setMode('signin')"
+        >
+          Sign in
+        </button>
+        <button
+          type="button"
+          [attr.aria-pressed]="mode() === 'signup'"
+          [disabled]="pending()"
+          (click)="setMode('signup')"
+        >
+          Create account
+        </button>
+      </div>
+    } @else if (!auth.recovery()) {
+      <button
+        class="text-button back-button"
+        type="button"
+        [disabled]="pending()"
+        (click)="setMode('signin')"
+      >
+        <span class="material-symbols-outlined" aria-hidden="true">arrow_back</span> Back to sign in
+      </button>
+    }
+    <div class="card-heading">
+      <p class="eyebrow">YOUR WORKSPACE</p>
+      <h2 id="auth-title">{{ heading() }}</h2>
+      <p>{{ description() }}</p>
+    </div>
+    <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+      <fieldset [disabled]="pending()" [attr.aria-label]="actionLabel()">
+        @if (!auth.recovery()) {
+          <div class="field">
+            <label for="auth-email">Email address</label>
+            <input
+              id="auth-email"
+              type="email"
+              formControlName="email"
+              autocomplete="email"
+              placeholder="you@example.com"
+              [attr.aria-invalid]="form.controls.email.touched && form.controls.email.invalid"
+              [attr.aria-describedby]="
+                form.controls.email.touched && form.controls.email.invalid
+                  ? 'auth-email-error'
+                  : null
+              "
+            />
+            @if (form.controls.email.touched && form.controls.email.invalid) {
+              <p class="field-error" id="auth-email-error" role="alert">
+                Enter a valid email address.
+              </p>
+            }
+          </div>
+        }
+        @if (auth.recovery() || mode() !== 'reset') {
+          <div class="field">
+            <div class="label-row">
+              <label for="auth-password">{{ auth.recovery() ? 'New password' : 'Password' }}</label>
+              @if (mode() === 'signin' && !auth.recovery()) {
+                <button class="text-button" type="button" (click)="setMode('reset')">
+                  Forgot password?
+                </button>
+              }
+            </div>
+            <div class="password-control">
+              <input
+                id="auth-password"
+                [type]="showPassword() ? 'text' : 'password'"
+                formControlName="password"
+                [attr.autocomplete]="
+                  mode() === 'signin' && !auth.recovery() ? 'current-password' : 'new-password'
+                "
+                placeholder="Enter your password"
+                [attr.aria-invalid]="
+                  form.controls.password.touched && form.controls.password.invalid
+                "
+                [attr.aria-describedby]="
+                  form.controls.password.touched && form.controls.password.invalid
+                    ? 'auth-password-error'
+                    : auth.recovery() || mode() === 'signup'
+                      ? 'auth-password-hint'
+                      : null
+                "
+              />
+              <button
+                class="password-toggle"
+                type="button"
+                [attr.aria-label]="showPassword() ? 'Hide password' : 'Show password'"
+                [attr.aria-pressed]="showPassword()"
+                (click)="showPassword.set(!showPassword())"
+              >
+                <span class="material-symbols-outlined" aria-hidden="true">{{
+                  showPassword() ? 'visibility_off' : 'visibility'
+                }}</span>
+              </button>
+            </div>
+            @if (auth.recovery() || mode() === 'signup') {
+              <p class="field-hint" id="auth-password-hint">Use at least 8 characters.</p>
+            }
+            @if (form.controls.password.touched && form.controls.password.invalid) {
+              <p class="field-error" id="auth-password-error" role="alert">
+                Use at least eight characters.
+              </p>
+            }
+          </div>
+        }
+        @if (error()) {
+          <p class="feedback error" role="alert">{{ error() }}</p>
+        }
+        @if (message()) {
+          <p class="feedback success" role="status">{{ message() }}</p>
+        }
+        <button class="primary submit-button" type="submit">
+          <span>{{ pending() ? 'Please wait...' : actionLabel() }}</span
+          ><span class="material-symbols-outlined" aria-hidden="true">{{
+            pending() ? 'hourglass_top' : 'arrow_forward'
+          }}</span>
+        </button>
+      </fieldset>
+    </form>
+    <p class="card-footnote">
+      <span class="material-symbols-outlined" aria-hidden="true">lock</span> Your workspace is
+      private to your account.
+    </p>
+  </section>
+</main>

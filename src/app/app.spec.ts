@@ -1,3 +1,9 @@
+import { signal } from '@angular/core';
+import { Auth } from './core/auth/auth';
+import {
+  WORKLOG_REPOSITORY,
+  LocalStorageWorklogRepository,
+} from './features/worklog/data-access/worklog-repository';
 import { TestBed } from '@angular/core/testing';
 import { App } from './app';
 import { provideRouter, Router } from '@angular/router';
@@ -7,7 +13,20 @@ describe('App', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [App],
-      providers: [provideRouter(routes)],
+      providers: [
+        provideRouter(routes),
+        { provide: WORKLOG_REPOSITORY, useFactory: () => new LocalStorageWorklogRepository() },
+        {
+          provide: Auth,
+          useValue: {
+            user: signal({ id: 'test', email: 'test@example.com' }),
+            recovery: signal(false),
+            editing: signal(false),
+            error: signal(''),
+            ready: Promise.resolve(),
+          },
+        },
+      ],
     }).compileComponents();
   });
 

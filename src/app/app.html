@@ -1,5 +1,11 @@
-﻿<app-header />
+<app-header />
 @if (workplace()) {
   <app-workplace-navigation />
 }
 <router-outlet />
+@if (!auth.user() && workplace()) {
+  <p role="alert">
+    Your session ended. Pending editor input is retained; sign in again to continue.
+  </p>
+  <a href="/auth">Sign in</a>
+}

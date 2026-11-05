@@ -1,4 +1,5 @@
-﻿import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { WORKLOG_REPOSITORY } from '../../data-access/worklog-repository';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { DIALOG_DATA, Dialog, DialogRef } from '@angular/cdk/dialog';
 import { firstValueFrom } from 'rxjs';
 import { WorklogStore } from '../../data-access/worklog-store';
@@ -13,6 +14,9 @@ import { ConfirmDialog } from '../../../../shared/ui/confirm-dialog/confirm-dial
 })
 export class TransferDialog {
   readonly store = inject(WorklogStore);
+  private readonly repository = inject(WORKLOG_REPOSITORY);
+  private readonly owner = this.repository.identity?.();
+  readonly accountChanged = computed(() => this.owner !== this.repository.identity?.());
   readonly ref = inject<DialogRef<void>>(DialogRef);
   readonly data = inject<{ month: string }>(DIALOG_DATA);
   private readonly dialogs = inject(Dialog);
@@ -76,6 +80,7 @@ export class TransferDialog {
     }
   }
   download(): void {
+    if (this.accountChanged()) return;
     const document = this.store.document();
     if (!document) return;
     this.error.set('');
@@ -95,19 +100,20 @@ export class TransferDialog {
       this.error.set('CSV download could not be started. Please retry.');
     }
   }
-  import(): void {
+  async import(): Promise<void> {
+    if (this.store.pending() || this.accountChanged()) return;
     const text = this.text();
     const preview = this.preview()?.result;
     if (text === null || !preview || preview.invalid) return;
     const count = preview.count;
-    if (this.store.importCsv(text)) {
+    if (await this.store.importCsv(text)) {
       this.text.set(null);
       this.error.set('');
       this.notice.set(`Worklog replaced with ${count} CSV records.`);
     } else this.error.set(this.store.error());
   }
   async close(): Promise<void> {
-    if (this.confirming) return;
+    if (this.confirming || this.store.pending()) return;
     if (this.text() !== null || this.reading()) {
       this.confirming = true;
       try {

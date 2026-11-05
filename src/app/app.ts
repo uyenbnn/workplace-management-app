@@ -1,4 +1,5 @@
-﻿import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { Auth } from './core/auth/auth';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { inject } from '@angular/core';
 import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
@@ -13,6 +14,7 @@ import { AppHeader } from './core/layout/app-header/app-header';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class App {
+  readonly auth = inject(Auth);
   private readonly router = inject(Router);
   readonly workplace = toSignal(
     this.router.events.pipe(

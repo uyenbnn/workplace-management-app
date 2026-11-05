@@ -43,3 +43,10 @@ __screenshots__/
 # System files
 .DS_Store
 Thumbs.db
+
+# Vercel local project metadata
+.vercel
+.env*
+
+/src/app/core/supabase/public-config.generated.ts
+!/.env.example

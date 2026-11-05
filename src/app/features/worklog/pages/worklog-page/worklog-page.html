@@ -1,4 +1,10 @@
-﻿<main>
+<main>
+  @if (store.importEnabled) {
+    <app-local-migration />
+  }
+  @if (store.loading()) {
+    <p role="status">Loading cloud worklog...</p>
+  }
   <div class="page-heading">
     <div>
       <p class="eyebrow">WORKPLACE / YOUR DAILY RECORD</p>
@@ -102,6 +108,6 @@
   </section>
   <footer>
     <span>Weekdays start with a meeting and a task. Make them yours.</span
-    ><span>Local storage only &middot; Clearing browser data removes your worklog.</span>
+    ><span>Private to your account &middot; Available wherever you sign in.</span>
   </footer>
 </main>

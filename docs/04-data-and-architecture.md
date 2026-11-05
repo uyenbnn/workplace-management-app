@@ -182,3 +182,26 @@ Replace in one revision-checked repository write; validation or storage failures
 all saved data and the pending preview. Preserve generation start, seal all dates through
 import day and imported worklog dates as processed so removed defaults do not reappear.
 Normal generation continues on subsequent dates. Preferences remain unchanged.
+
+## Supabase migration - approved 2026-11-04
+
+The user approved replacing local-only worklog persistence with Supabase project
+lasdaibwrssqnudrtlvf. Use private email/password accounts, one versioned JSONB document per
+user, ownership-enforced RLS and transactional expected-revision writes. This supersedes
+local-storage-only persistence and the account/authentication deferral.
+
+Use online saves with preserved drafts on failure, reviewed full-document legacy import and
+readback verification. Do not automatically merge or replace existing cloud worklogs. Preserve
+generation/deletion metadata, TODOs, CSV replacement semantics and statistics behavior.
+View preferences remain device-local. Preview and production share this Supabase project.
+See [the Supabase knowledge base](../supabase-document/README.md) for implementation,
+configuration, migration, verification and operational status.
+
+## Fresh Supabase persistence; legacy import deferred - approved 2026-11-04
+
+The user deferred importing old browser worklogs. Production starts from the authenticated
+account's cloud document; when absent, create a fresh document and generate only the normal
+initial defaults. Do not read, normalize, upload or erase the legacy browser worklog.
+Disable the legacy-import prompt and actions by default. The existing reviewed-import code
+is retained behind ENABLE_LOCAL_WORKLOG_IMPORT for later explicit reactivation.
+This supersedes the automatic migration-review requirement in the earlier Supabase plan.

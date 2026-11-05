@@ -1,4 +1,4 @@
-﻿:host {
+:host {
   display: block;
 }
 .app-header {
@@ -110,6 +110,7 @@ nav:has(.is-active:active) .nav-indicator {
   flex-shrink: 0;
 }
 .user-button {
+  text-decoration: none;
   justify-self: end;
   display: flex;
   align-items: center;

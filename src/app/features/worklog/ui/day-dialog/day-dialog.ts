@@ -1,4 +1,5 @@
-﻿import {
+import { WORKLOG_REPOSITORY } from '../../data-access/worklog-repository';
+import {
   ChangeDetectionStrategy,
   Component,
   computed,
@@ -41,6 +42,9 @@ export interface DayDialogData {
 export class DayDialog {
   readonly data = inject<DayDialogData>(DIALOG_DATA);
   readonly store = inject(WorklogStore);
+  private readonly repository = inject(WORKLOG_REPOSITORY);
+  private readonly owner = this.repository.identity?.();
+  readonly accountChanged = computed(() => this.owner !== this.repository.identity?.());
   readonly ref = inject<DialogRef<void>>(DialogRef);
   private readonly dialogs = inject(Dialog);
   private readonly toast = inject(Toast);
@@ -70,6 +74,7 @@ export class DayDialog {
   readonly dirty = signal(false);
   readonly notice = signal('');
   private confirming = false;
+  private worklogSave: Promise<void> = Promise.resolve();
   private deletingTodoId: string | null = null;
   readonly label = parseDate(this.data.date).toLocaleDateString(undefined, {
     weekday: 'long',
@@ -139,7 +144,7 @@ export class DayDialog {
     );
   }
   async choose(item: LoggedWorkItem): Promise<void> {
-    this.tryAutoSave();
+    await this.tryAutoSave();
     if (await this.discard()) {
       this.selected.set(this.items().find((entry) => entry.id === item.id) ?? item);
       this.dirty.set(false);
@@ -147,7 +152,7 @@ export class DayDialog {
     }
   }
   async add(type: LoggedItemType): Promise<void> {
-    this.tryAutoSave();
+    await this.tryAutoSave();
     if (await this.discard()) {
       this.selected.set(this.store.draft(this.data.date, type));
       this.dirty.set(true);
@@ -155,8 +160,12 @@ export class DayDialog {
     }
   }
   save(values: ItemValues): void {
+    if (this.store.pending() || this.accountChanged()) return;
+    this.worklogSave = this.persist(values);
+  }
+  private async persist(values: ItemValues): Promise<void> {
     const item = this.selected();
-    if (item && this.store.save(item, values)) {
+    if (item && (await this.store.save(item, values))) {
       this.selected.set(this.items().find((entry) => entry.id === item.id) ?? null);
       this.dirty.set(false);
       this.notice.set('');
@@ -166,12 +175,14 @@ export class DayDialog {
   autoSave(values: ItemValues): void {
     if (!this.confirming && this.dirty()) this.save(values);
   }
-  private tryAutoSave(): void {
+  private async tryAutoSave(): Promise<void> {
     if (!this.confirming && this.dirty()) this.itemForm()?.autoSave();
+    await this.worklogSave;
   }
-  selectTab(tab: DayDialogTab): void {
-    if (this.tab() === 'worklog' && tab !== 'worklog') this.tryAutoSave();
-    if (this.tab() === 'todo' && tab !== 'todo') this.saveTodoDrafts();
+  async selectTab(tab: DayDialogTab): Promise<void> {
+    if (this.store.pending() || this.accountChanged()) return;
+    if (this.tab() === 'worklog' && tab !== 'worklog') await this.tryAutoSave();
+    if (this.tab() === 'todo' && tab !== 'todo') await this.saveTodoDrafts();
     this.tab.set(tab);
   }
   navigateTabs(event: KeyboardEvent, worklog: HTMLButtonElement, todo: HTMLButtonElement): void {
@@ -186,8 +197,8 @@ export class DayDialog {
     (tab === 'worklog' ? worklog : todo).focus();
   }
   readonly todoFocusId = signal<string | undefined>(undefined);
-  createTodoAfter(item: Todo): void {
-    this.saveTodo(item);
+  async createTodoAfter(item: Todo): Promise<void> {
+    await this.saveTodo(item);
     if (this.todoDrafts().has(item.id) || this.todoErrors()[item.id]) return;
     this.addTodo();
   }
@@ -213,14 +224,15 @@ export class DayDialog {
       return next;
     });
   }
-  saveTodo(item: Todo): void {
+  async saveTodo(item: Todo): Promise<void> {
+    if (this.store.pending() || this.accountChanged()) return;
     const draft = this.todoDrafts().get(item.id);
     if (!draft || this.deletingTodoId === item.id) return;
     if (!draft.title.trim()) {
       this.todoErrors.update((errors) => ({ ...errors, [item.id]: 'Enter a TODO title.' }));
       return;
     }
-    if (this.store.saveTodo(draft, { title: draft.title })) {
+    if (await this.store.saveTodo(draft, { title: draft.title })) {
       this.todoDrafts.update((drafts) => {
         const next = new Map(drafts);
         next.delete(item.id);
@@ -230,20 +242,22 @@ export class DayDialog {
       this.notice.set('TODO saved.');
     } else this.todoErrors.update((errors) => ({ ...errors, [item.id]: this.store.error() }));
   }
-  private saveTodoDrafts(): void {
-    for (const item of this.todoDrafts().values()) this.saveTodo(item);
+  private async saveTodoDrafts(): Promise<void> {
+    for (const item of this.todoDrafts().values()) await this.saveTodo(item);
   }
-  toggleTodo(id: string): void {
+  async toggleTodo(id: string): Promise<void> {
+    if (this.store.pending() || this.accountChanged()) return;
     if (!this.todos().some((entry) => entry.id === id)) {
       const draft = this.todoDrafts().get(id);
-      if (draft) this.saveTodo(draft);
+      if (draft) await this.saveTodo(draft);
     }
     const item = this.todos().find((entry) => entry.id === id);
     if (item) {
-      if (this.store.toggleTodo(id)) this.notice.set('TODO completion saved.');
+      if (await this.store.toggleTodo(id)) this.notice.set('TODO completion saved.');
     }
   }
   async removeTodo(item: Todo): Promise<void> {
+    if (this.accountChanged()) return;
     if (this.confirming) return;
     const saved = this.todos().some((entry) => entry.id === item.id);
     this.deletingTodoId = item.id;
@@ -265,7 +279,7 @@ export class DayDialog {
         }))
       )
         return;
-      if (!saved || this.store.remove(item.id)) {
+      if (!this.accountChanged() && (!saved || (await this.store.remove(item.id)))) {
         this.todoDrafts.update((drafts) => {
           const next = new Map(drafts);
           next.delete(item.id);
@@ -279,6 +293,7 @@ export class DayDialog {
     }
   }
   async cancel(): Promise<void> {
+    if (this.store.pending() || this.accountChanged()) return;
     if (await this.discard()) {
       this.selected.set(null);
       this.dirty.set(false);
@@ -297,6 +312,7 @@ export class DayDialog {
     this.checked.set(this.allChecked() ? new Set() : new Set(this.items().map((item) => item.id)));
   }
   async removeChecked(): Promise<void> {
+    if (this.accountChanged()) return;
     if (this.confirming) return;
     const items = this.checkedItems();
     if (!items.length) return;
@@ -314,7 +330,7 @@ export class DayDialog {
       }))
     )
       return;
-    if (this.store.removeMany(ids)) {
+    if (!this.accountChanged() && (await this.store.removeMany(ids))) {
       this.checked.set(new Set());
       if (removesEditor) {
         this.selected.set(null);
@@ -325,6 +341,7 @@ export class DayDialog {
     }
   }
   async remove(): Promise<void> {
+    if (this.accountChanged()) return;
     const item = this.selected();
     if (!item) return;
     if (
@@ -334,7 +351,7 @@ export class DayDialog {
         action: 'Delete item',
       })
     ) {
-      if (this.store.remove(item.id)) {
+      if (!this.accountChanged() && (await this.store.remove(item.id))) {
         this.checked.update((current) => new Set([...current].filter((id) => id !== item.id)));
         this.selected.set(null);
         this.dirty.set(false);
@@ -344,6 +361,7 @@ export class DayDialog {
     }
   }
   async toggleOff(): Promise<void> {
+    if (this.accountChanged()) return;
     if (!(await this.discard())) return;
     const off = !this.off();
     if (
@@ -356,7 +374,7 @@ export class DayDialog {
       }))
     )
       return;
-    if (this.store.dayOff(this.data.date, off)) {
+    if (!this.accountChanged() && (await this.store.dayOff(this.data.date, off))) {
       this.checked.set(new Set());
       this.selected.set(null);
       this.dirty.set(false);
@@ -364,9 +382,11 @@ export class DayDialog {
     }
   }
   async close(): Promise<void> {
+    await this.worklogSave;
+    if (this.store.pending() || this.accountChanged()) return;
     if (this.confirming) return;
-    this.tryAutoSave();
-    this.saveTodoDrafts();
+    await this.tryAutoSave();
+    await this.saveTodoDrafts();
     if (this.todoDrafts().size) {
       if (
         await this.confirm({

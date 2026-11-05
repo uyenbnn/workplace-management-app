@@ -138,3 +138,19 @@ including column-filter popovers and worklog forms, for pointer and keyboard foc
 focus colors and shadow from central CSS variables. Keep distinct keyboard focus for buttons,
 links, checkboxes, and radios. Forced-colors mode uses a visible system-color outline because
 box shadows may be suppressed. Focus must not change field dimensions.
+
+## Account control - approved 2026-11-04
+
+Supabase authentication supersedes the mock Joey account placeholder. Show Sign in for a
+signed-out visitor and Sign out for an authenticated account. Prevent voluntary sign-out while
+an editor or save is active. Account forms and pending/error feedback use native controls,
+semantic colors and the existing global focus styles.
+
+## Account page styling - approved 2026-11-04
+
+Use the existing Unbounded headings, Albert Sans body typography, semantic pink accents,
+white bordered surfaces, pill-shaped account switcher and primary action, and global field
+focus treatment. Authentication uses a two-column introduction/form layout on desktop and
+a single compact column on narrow screens. Keep labeled email/password fields, password
+visibility control, inline errors, pending feedback and consistent sign-in, signup and
+password-recovery presentation.

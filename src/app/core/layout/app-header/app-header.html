@@ -1,4 +1,4 @@
-﻿<header class="app-header">
+<header class="app-header">
   <div class="header-content">
     <a class="brand" routerLink="/" aria-label="Workplace home"
       ><span class="brand-mark">w.</span><span>workplace</span></a
@@ -24,9 +24,21 @@
         <span>Personal</span>
       </a>
     </nav>
-    <button class="user-button" type="button" aria-label="User account: Joey">
-      <span class="material-symbols-outlined" aria-hidden="true">person</span>
-      <span>Joey</span>
-    </button>
+    @if (auth.user(); as user) {
+      <button
+        class="user-button"
+        type="button"
+        [disabled]="auth.editing()"
+        (click)="signOut()"
+        [attr.aria-label]="'Sign out ' + user.email"
+      >
+        Sign out
+      </button>
+    } @else {
+      <a class="user-button" routerLink="/auth">Sign in</a>
+    }
+    @if (auth.error()) {
+      <p role="alert">{{ auth.error() }}</p>
+    }
   </div>
 </header>

@@ -1,3 +1,4 @@
+import { WorklogStore } from '../../data-access/worklog-store';
 import { TestBed } from '@angular/core/testing';
 import { DIALOG_DATA, Dialog, DialogRef } from '@angular/cdk/dialog';
 import { Subject, of } from 'rxjs';
@@ -25,7 +26,7 @@ describe('Day dialog bulk deletion', () => {
     closed: new Subject<void>(),
     close: vi.fn(),
   };
-  beforeEach(() => {
+  beforeEach(async () => {
     const today = localDate();
     saved = reconcile(emptyDocument(today), today);
     saved = {
@@ -61,6 +62,7 @@ describe('Day dialog bulk deletion', () => {
       ],
     });
     TestBed.overrideProvider(Dialog, { useValue: { open: confirm } });
+    await TestBed.inject(WorklogStore).load();
   });
   afterEach(() => {
     ref.closed.next();
@@ -69,7 +71,7 @@ describe('Day dialog bulk deletion', () => {
   it('saves on Enter, focuses a new title, and blocks creation on invalid or failed saves', async () => {
     const fixture = TestBed.createComponent(DayDialog);
     const page = fixture.componentInstance;
-    page.selectTab('todo');
+    await page.selectTab('todo');
     page.addTodo();
     await fixture.whenStable();
     const element: HTMLElement = fixture.nativeElement;
@@ -98,7 +100,7 @@ describe('Day dialog bulk deletion', () => {
     expect(titles[1].value).toBe('');
     expect(document.activeElement).toBe(titles[1]);
   });
-  it('offers independent checkboxes, select all, partial selection and disabled empty deletion', () => {
+  it('offers independent checkboxes, select all, partial selection and disabled empty deletion', async () => {
     const fixture = TestBed.createComponent(DayDialog);
     fixture.detectChanges();
     const element: HTMLElement = fixture.nativeElement;
@@ -242,6 +244,7 @@ describe('Day dialog bulk deletion', () => {
     expect(page.store.error()).toContain('Stale revision');
     expect(hours.value).toBe('4');
     write.mockRestore();
+    await page.store.load(); // Review the saved revision before retrying this retained draft.
     hours.dispatchEvent(new FocusEvent('focusout', { bubbles: true }));
     await fixture.whenStable();
     expect(saved.items.find((item) => item.id === page.selected()?.id)).toMatchObject({
@@ -277,7 +280,7 @@ describe('Day dialog bulk deletion', () => {
   it('saves inline drafts on leaving the row, retains failed text and protects close', async () => {
     const fixture = TestBed.createComponent(DayDialog);
     const page = fixture.componentInstance;
-    page.selectTab('todo');
+    await page.selectTab('todo');
     page.addTodo();
     await fixture.whenStable();
     const element: HTMLElement = fixture.nativeElement;
@@ -301,8 +304,8 @@ describe('Day dialog bulk deletion', () => {
       'Storage full',
     );
     expect(success).not.toHaveBeenCalled();
-    page.selectTab('worklog');
-    page.selectTab('todo');
+    await page.selectTab('worklog');
+    await page.selectTab('todo');
     await fixture.whenStable();
     expect(title.value).toBe('Pending reminder');
     answer = false;
@@ -319,14 +322,14 @@ describe('Day dialog bulk deletion', () => {
   it('validates blank titles, retries and supports saving a new item via its checkbox', async () => {
     const fixture = TestBed.createComponent(DayDialog);
     const page = fixture.componentInstance;
-    page.selectTab('todo');
+    await page.selectTab('todo');
     page.addTodo();
     const draft = page.todoRows()[0];
-    page.saveTodo(draft);
+    await page.saveTodo(draft);
     expect(page.todoErrors()[draft.id]).toBe('Enter a TODO title.');
     expect(page.todos()).toHaveLength(0);
     page.editTodo({ item: draft, values: { title: 'Ready' } });
-    page.toggleTodo(draft.id);
+    await page.toggleTodo(draft.id);
     expect(page.todos()[0]).toMatchObject({ title: 'Ready', completed: true });
     expect(page.todoDrafts().size).toBe(0);
     page.addTodo();
@@ -337,7 +340,7 @@ describe('Day dialog bulk deletion', () => {
     saved.items.push({ ...newTodo(localDate()), title: 'Reminder' });
     const fixture = TestBed.createComponent(DayDialog);
     const page = fixture.componentInstance;
-    page.selectTab('todo');
+    await page.selectTab('todo');
     await fixture.whenStable();
     const checkbox: HTMLInputElement = fixture.nativeElement.querySelector(
       'app-todo-checklist input[type=checkbox]',
@@ -412,5 +415,44 @@ describe('Day dialog bulk deletion', () => {
     expect(page.selected()).toBe(current);
     expect(page.dirty()).toBe(true);
     expect(page.items()).toHaveLength(2);
+  });
+  it('waits for a delayed save before closing and reports no early success', async () => {
+    const fixture = TestBed.createComponent(DayDialog);
+    await fixture.whenStable();
+    const page = fixture.componentInstance;
+    let release: () => void = () => {
+      throw new Error('Not initialized');
+    };
+    const gate = new Promise<void>((resolve) => {
+      release = resolve;
+    });
+    const before = saved;
+    vi.spyOn(TestBed.inject(WORKLOG_REPOSITORY), 'write').mockImplementationOnce(
+      async (document) => {
+        await gate;
+        saved = document;
+        return saved;
+      },
+    );
+    const element: HTMLElement = fixture.nativeElement;
+    const hours = element.querySelector<HTMLInputElement>('#hours');
+    if (!hours) throw new Error('Missing hours input');
+    hours.value = '3';
+    hours.dispatchEvent(new Event('input', { bubbles: true }));
+    hours.dispatchEvent(new FocusEvent('focusout', { bubbles: true }));
+    await Promise.resolve();
+    const closing = page.close();
+    ref.close.mockClear();
+    expect(page.store.pending()).toBe(true);
+    expect(saved).toBe(before);
+    expect(success).not.toHaveBeenCalled();
+    expect(ref.close).not.toHaveBeenCalled();
+    release();
+    await closing;
+    expect(success).toHaveBeenCalledWith('Item saved.');
+    expect(ref.close).toHaveBeenCalled();
+    expect(saved.items.find((item) => item.id === page.selected()?.id)).toMatchObject({
+      timeSpent: 180,
+    });
   });
 });

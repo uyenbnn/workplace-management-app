@@ -1,4 +1,4 @@
-﻿import { TestBed } from '@angular/core/testing';
+import { TestBed } from '@angular/core/testing';
 import { Dialog } from '@angular/cdk/dialog';
 import { provideRouter } from '@angular/router';
 import { Subject } from 'rxjs';
@@ -42,8 +42,10 @@ describe('Worklog calendar views', () => {
     TestBed.overrideProvider(Dialog, { useValue: dialog });
   });
   afterEach(() => TestBed.resetTestingModule());
-  it('excludes TODOs from work item counts, hours and logged totals in both views', () => {
-    const page = TestBed.createComponent(WorklogPage).componentInstance;
+  it('excludes TODOs from work item counts, hours and logged totals in both views', async () => {
+    const fixture = TestBed.createComponent(WorklogPage);
+    await fixture.whenStable();
+    const page = fixture.componentInstance;
     const before = page.totals();
     page.store.document.update((document) =>
       document
@@ -57,8 +59,9 @@ describe('Worklog calendar views', () => {
     page.setView('work-week');
     expect(page.totals()).toEqual(before);
   });
-  it('replaces the device badge with a transfer button and uses the active period month', () => {
+  it('replaces the device badge with a transfer button and uses the active period month', async () => {
     const fixture = TestBed.createComponent(WorklogPage);
+    await fixture.whenStable();
     const page = fixture.componentInstance;
     page.month.set('2026-09-01');
     fixture.detectChanges();
@@ -76,6 +79,7 @@ describe('Worklog calendar views', () => {
       }),
     );
     closed.next();
+    await fixture.whenStable();
     page.anchor.set('2026-11-02');
     page.setView('work-week');
     page.openTransfer();
@@ -84,10 +88,13 @@ describe('Worklog calendar views', () => {
       expect.objectContaining({ data: { month: '2026-11' } }),
     );
     closed.next();
+    await fixture.whenStable();
     expect(page.store.editing()).toBe(false);
   });
-  it('preserves anchors across view switches and navigates by the active period without writes', () => {
-    const page = TestBed.createComponent(WorklogPage).componentInstance;
+  it('preserves anchors across view switches and navigates by the active period without writes', async () => {
+    const fixture = TestBed.createComponent(WorklogPage);
+    await fixture.whenStable();
+    const page = fixture.componentInstance;
     page.anchor.set('2026-10-31');
     page.setView('work-week');
     expect(page.visibleDates()[0]).toBe('2026-10-26');
@@ -104,8 +111,9 @@ describe('Worklog calendar views', () => {
     expect(page.anchor().endsWith('-01')).toBe(true);
     expect(repository.write).not.toHaveBeenCalled();
   });
-  it('shows all cards in Work week and reacts to shared data changes', () => {
+  it('shows all cards in Work week and reacts to shared data changes', async () => {
     const fixture = TestBed.createComponent(WorklogPage);
+    await fixture.whenStable();
     const page = fixture.componentInstance;
     page.anchor.set('2026-10-26');
     const items = Array.from({ length: 4 }, () => newItem('2026-10-26', 'MEETING'));
@@ -125,8 +133,10 @@ describe('Worklog calendar views', () => {
     expect(page.totals().count).toBe(3);
     expect(element.querySelector('.overflow')?.textContent).toContain('+1 more');
   });
-  it('opens the existing editor and protects drafts without moving the calendar trigger', () => {
-    const page = TestBed.createComponent(WorklogPage).componentInstance;
+  it('opens the existing editor and protects drafts without moving the calendar trigger', async () => {
+    const fixture = TestBed.createComponent(WorklogPage);
+    await fixture.whenStable();
+    const page = fixture.componentInstance;
     const month = page.month();
     page.open('2026-09-30', 'chosen-item');
     expect(dialog.open).toHaveBeenCalledWith(
@@ -143,13 +153,16 @@ describe('Worklog calendar views', () => {
     expect(page.month()).toBe(month);
     expect(page.anchor()).toBe('2026-09-30');
     closed.next();
+    await fixture.whenStable();
     expect(page.selected()).toBeNull();
     expect(page.store.editing()).toBe(false);
     page.setView('work-week');
     expect(page.anchor()).toBe('2026-09-30');
   });
-  it('allows switching when preference persistence fails', () => {
-    const page = TestBed.createComponent(WorklogPage).componentInstance;
+  it('allows switching when preference persistence fails', async () => {
+    const fixture = TestBed.createComponent(WorklogPage);
+    await fixture.whenStable();
+    const page = fixture.componentInstance;
     preference.write.mockReturnValue(false);
     page.setView('work-week');
     expect(page.view()).toBe('work-week');

@@ -1,0 +1,39 @@
+@if (migration.pending()) {
+  <section aria-labelledby="migration-title" [attr.aria-busy]="migration.busy()">
+    <h2 id="migration-title">Move your device worklog to your account</h2>
+    <p>
+      Your original browser data will remain untouched. Download a full backup before continuing.
+    </p>
+    @if (migration.local(); as local) {
+      <p>
+        {{ local.items.length }} items, {{ local.dayOffDates.length }} days off. Generation starts
+        {{ local.generationStartDate }}; {{ local.processedDates.length }} processed dates will be
+        preserved.
+      </p>
+    }
+    @if (migration.error()) {
+      <p role="alert">{{ migration.error() }}</p>
+    }
+    @if (migration.cloudExists()) {
+      <p>This account already has cloud data. Automatic replacement is blocked.</p>
+    }
+    <button
+      type="button"
+      [disabled]="migration.raw() === null || migration.busy()"
+      (click)="migration.download()"
+    >
+      Download full JSON backup
+    </button>
+    <button
+      type="button"
+      [disabled]="!migration.local() || migration.busy() || migration.cloudExists()"
+      (click)="store.importLocal()"
+    >
+      {{ migration.busy() ? 'Verifying transfer...' : 'Import and verify local worklog' }}
+    </button>
+    <button type="button" [disabled]="migration.busy()" (click)="store.continueCloud()">
+      {{ migration.cloudExists() ? 'Continue with cloud worklog' : 'Start an empty cloud worklog' }}
+    </button>
+    <p>Starting empty skips import; it does not erase the device backup.</p>
+  </section>
+}
